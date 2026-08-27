@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Ressonâncias — Jogo Sonoro Abstrato</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1c24 0%, #2d3349 100%);
+      overflow: hidden;
+      user-select: none;
+    }
+    #container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    svg {
+      display: block;
+      background: transparent;
+      box-shadow: 0 0 40px #000a  ;
+      border-radius: 24px;
+    }
+    .shape {
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s cubic-bezier(.4,2,.6,1);
+      filter: brightness(0.95);
+      stroke-width: 3;
+      stroke: rgba(255,255,255,0.12);
+      opacity: 0.92;
+      will-change: transform, fill, filter;
+    }
+    .shape:hover {
+      filter: brightness(1.25) drop-shadow(0 0 12px #fff3);
+      z-index: 1;
+    }
+    .glow {
+      animation: glow 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      0% { filter: brightness(1.05) drop-shadow(0 0 6px #8fffb3); }
+      100% { filter: brightness(1.35) drop-shadow(0 0 24px #8fffb3); }
+    }
+    #ui {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      color: #f0f4f8;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      font-size: 1.08rem;
+      background: rgba(26, 30, 44, 0.78);
+      padding: 16px 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px #0006;
+      z-index: 10;
+      max-width: 420px;
+      letter-spacing: 0.01em;
+    }
+    #score {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #a7ffc3;
+      margin-bottom: 6px;
+      letter-spacing: 2px;
+    }
+    #hint {
+      color: #b6c8d8;
+      font-size: 0.98rem;
+      margin-top: 6px;
+      opacity: 0.88;
+    }
+    #reset {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(34, 40, 60, 0.88);
+      color: #e2f8ff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 26px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #0004;
+      transition: background 0.2s, color 0.2s;
+      z-index: 12;
+    }
+    #reset:hover {
+      background: #243b55;
+      color: #fff;
+      border: 1px solid #8fffb3;
+    }
+    @media (max-width: 600px) {
+      #ui {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 14px;
+        font-size: 0.97rem;
+        padding: 12px 16px;
+        max-width: 94vw;
+      }
+      #score { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <div id="ui">
+    <div id="score">0</div>
+    <div id="combo"></div>
+    <div id="hint">
+      <strong>Clique ou toque</strong> nas formas para criar sons.<br>
+      Cada forma <span style="color:#8fffb3;">ressoa</span> com as vizinhas.<br>
+      Descubra padrões e harmonias.
+    </div>
+  </div>
+  <button id="reset">🔄 Reiniciar</button>
+
+  <script>
+    // ====== CORE DATA STRUCTURES ======
+    const COLORS = [
+      { idle: '#34d399', hover: '#8fffb3' }, // teal
+      { idle: '#60a5fa', hover: '#a7cffe' }, // blue
+      { idle: '#f472b6', hover: '#ffb3e6' }, // pink
+      { idle: '#fbbf24', hover: '#ffe58a' }, // gold
+      { idle: '#8b5cf6', hover: '#c4b5fd' }, // violet
+      { idle: '#22d3ee', hover: '#77f3fc' }, // cyan
+      { idle: '#f97316', hover: '#ffb76b' }, // orange
+      { idle: '#14b8a6', hover: '#57e6c3' }  // green-blue
+    ];
+
+    const SHAPES = ['circle', 'rect', 'polygon'];
+    const NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    const OCTAVES = [4, 5, 6];
+
+    // Web Audio context (lazy init on user gesture)
+    let audioCtx = null;
+    let masterGain = null;
+
+    function initAudio() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 0.22;
+      masterGain.connect(audioCtx.destination);
+    }
+
+    // ====== SOUND SYNTHESIS ======
+    function freqFromNote(noteName, octave) {
+      // noteName: 'C', 'D', ... 'B'; octave: 4, 5, 6
+      const noteValues = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 };
+      const baseA4 = 440;
+      const n = noteValues[noteName] + (octave - 4) * 12;
+      // A4 = 440Hz, each semitone = 2^(1/12)
+      return baseA4 * Math.pow(2, (n - 57) / 12);
+    }
+
+    function playTone({freq, duration=0.4, type='sine', accent=false, cutoffMult=1.0}) {
+      if (!audioCtx) initAudio();
+      // Resume context if suspended (mobile browsers)
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = type; // 'sine', 'triangle', 'square', 'sawtooth'
+      osc.frequency.value = freq;
+
+      // Envelope
+      gain.gain.setValueAtTime(0, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(accent ? 0.82 : 0.55, audioCtx.currentTime + 0.02);
+      gain.gain.linearRampToValueAtTime(accent ? 0.38 : 0.22, audioCtx.currentTime + duration * 0.55);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+
+      // Filter cutoff for softer tail
+      let cutoff = freq * (cutoffMult + (accent ? 0.2 : 0.0));
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.Q.value = 8;
+      filter.frequency.value = cutoff;
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration + 0.05);
+
+      // Clean up
+      osc.onended = () => {
+        osc.disconnect();
+        gain.disconnect();
+        filter.disconnect();
+      };
+    }
+
+    // ====== SHAPE ENTITY ======
+    class ResonanceShape {
+      constructor(id, type, x, y, size, colorSet, note, octave, rotation=0) {
+        this.id = id;
+        this.type = type; // 'circle', 'rect', 'polygon'
+        this.x = x;
+        this.y = y;
+        this.baseSize = size;
+        this.size = size;
+        this.colorSet = colorSet;
+        this.color = colorSet.idle;
+        this.note = note;        // 'C', 'D', etc.
+        this.octave = octave;    // 4, 5, 6
+        this.rotation = rotation; // degrees
+        this.glow = false;
+        this.comboActive = false;
+        this.velocity = { dx: 0, dy: 0 };
+        this.targetX = x;
+        this.targetY = y;
+        this.resonating = false;
+      }
+
+      get element() {
+        return document.getElementById(`shape-${this.id}`);
+      }
+
+      update(dt) {
+        // Animate position (spring-like movement)
+        const spring = 0.18;
+        const friction = 0.92;
+        this.velocity.dx += (this.targetX - this.x) * spring;
+        this.velocity.dy += (this.targetY - this.y) * spring;
+        this.velocity.dx *= friction;
+        this.velocity.dy *= friction;
+        this.x += this.velocity.dx;
+        this.y += this.velocity.dy;
+
+        // Animate size pulsation
+        if (this.glow) {
+          const t = Date.now() / 350;
+          this.size = this.baseSize * (1 + 0.08 * Math.sin(t));
+        } else {
+          this.size = this.baseSize;
+        }
+      }
+
+      render() {
+        const el = this.element;
+        if (!el) return;
+        // Apply transforms
+        let transform = '';
+        if (this.type === 'polygon') {
+          // SVG polygons need rotation transform around center
+          transform = `translate(${this.x},${this.y}) rotate(${this.rotation}) scale(${this.size / 60})`;
+        } else {
+          transform = `translate(${this.x}px, ${this.y}px) scale(${this.size / this.baseSize})`;
+        }
+        el.style.transform = transform;
+
+        // Color and glow
+        el.setAttribute('fill', this.color);
+        el.setAttribute('data-glow', this.glow ? 'true' : 'false');
+        el.classList.toggle('glow', this.glow);
+
+        // Stroke for active
+        el.setAttribute('stroke', this.glow ? this.colorSet.hover : 'rgba(255,255,255,0.12)');
+        el.setAttribute('stroke-width', this.glow ? '5' : '3');
+      }
+    }
+
+    // ====== MAIN GAME ======
+    const container = document.getElementById('container');
+    const scoreEl = document.getElementById('score');
+    const comboEl = document.getElementById('combo');
+    const resetBtn = document.getElementById('reset');
+
+    let shapes = [];
+    let connections = [];
+    let score = 0;
+    let combo = 0;
+    let lastComboTime = 0;
+    let animationFrame = null;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let svgNS = "http://www.w3.org/2000/svg";
+
+    function createSVG() {
+      // Remove old SVG if exists
+      const oldSvg = document.querySelector('svg');
+      if (oldSvg) oldSvg.remove();
+
+      // Create SVG
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('width', width);
+      svg.setAttribute('height', height);
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('id', 'game-svg');
+      container.appendChild(svg);
+
+      // Add subtle radial gradient background
+      const defs = document.createElementNS(svgNS, 'defs');
+      svg.appendChild(defs);
+
+      const grad = document.createElementNS(svgNS, 'radialGradient');
+      grad.id = 'bggrad';
+      grad.setAttribute('cx', '50%');
+      grad.setAttribute('cy', '50%');
+      grad.setAttribute('r', '75%');
+      defs.appendChild(grad);
+
+      const stop1 = document.createElementNS(svgNS, 'stop');
+      stop1.setAttribute('offset', '0%');
+      stop1.setAttribute('stop-color', '#232739');
+      stop1.setAttribute('stop-opacity', '0.98');
+      grad.appendChild(stop1);
+
+      const stop2 = document.createElementNS(svgNS, 'stop');
+      stop2.setAttribute('offset', '100%');
+      stop2.setAttribute('stop-color', '#1a1c24');
+      stop2.setAttribute('stop-opacity', '1');
+      grad.appendChild(stop2);
+
+      const rect = document.createElementNS(svgNS, 'rect');
+      rect.setAttribute('x', 0);
+      rect.setAttribute('y', 0);
+      rect.setAttribute('width', width);
+      rect.setAttribute('height', height);
+      rect.setAttribute('fill', 'url(#bggrad)');
+      svg.appendChild(rect);
+
+      return svg;
+    }
+
+    function randomBetween(a, b) {
+      return a + Math.random() * (b - a);
+    }
+
+    function createShapes(svg, n = 7) {
+      shapes = [];
+      connections = [];
+      const margin = Math.max(width, height) * 0.12;
+      const gridW = Math.floor(Math.sqrt(n));
+      const gridH = Math.ceil(n / gridW);
+
+      // Distribute in a loose grid with some randomness
+      const positions = [];
+      for (let i = 0; i < n; i++) {
+        let gx = i % gridW;
+        let gy = Math.floor(i / gridW);
+        const cellX = margin + gx * ((width - 2 * margin) / (gridW - 1 || 1));
+        const cellY = margin + gy * ((height - 2 * margin) / (gridH - 1 || 1));
+        // Add jitter
+        const x = cellX + randomBetween(-40, 40);
+        const y = cellY + randomBetween(-40, 40);
+        positions.push({x, y});
+      }
+
+      // Shuffle positions
+      for (let i = positions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [positions[i], positions[j]] = [positions[j], positions[i]];
+      }
+
+      for (let i = 0; i < n; i++) {
+        const colorSet = COLORS[i % COLORS.length];
+        const shapeType = SHAPES[i % SHAPES.length];
+        const note = NOTES[i % NOTES.length];
+        const octave = OCTAVES[Math.floor(i / NOTES.length) % OCTAVES.length];
+
+        // Size varies by type
+        let baseSize, svgEl;
+        let rotation = 0;
+
+        switch (shapeType) {
+          case 'circle':
+            baseSize = randomBetween(55, 85);
+            svgEl = document.createElementNS(svgNS, 'circle');
+            svgEl.setAttribute('cx', positions[i].x);
+            svgEl.setAttribute('cy', positions[i].y);
+            svgEl.setAttribute('r', baseSize);
+            break;
+
+          case 'rect':
+            baseSize = randomBetween(65, 95);
+            svgEl = document.createElementNS(svgNS, 'rect');
+            svgEl.setAttribute('x', positions[i].x - baseSize / 2);
+            svgEl.setAttribute('y', positions[i].y - baseSize / 2);
+            svgEl.setAttribute('width', baseSize);
+            svgEl.setAttribute('height', baseSize);
+            svgEl.setAttribute('rx', baseSize * 0.18);
+            break;
+
+          case 'polygon':
+            baseSize = 60;
+            svgEl = document.createElementNS(svgNS, 'polygon');
+            // Regular polygon points
+            const sides = 3 + (i % 3); // 3, 4, or 5 sides
+            rotation = randomBetween(0, 360);
+            let points = '';
+            for (let v = 0; v < sides; v++) {
+              const angle = (2 * Math.PI * v / sides) + Math.PI / 2;
+              const px = Math.cos(angle) * baseSize;
+              const py = Math.sin(angle) * baseSize;
+              points += `${px},${py} `;
+            }
+            svgEl.setAttribute('points', points.trim());
+            svgEl.setAttribute('transform', `translate(${positions[i].x},${positions[i].y}) rotate(${rotation})`);
+            break;
+        }
+
+        svgEl.setAttribute('id', `shape-${i}`);
+        svgEl.setAttribute('fill', colorSet.idle);
+        svgEl.setAttribute('class', 'shape');
+        svgEl.setAttribute('data-id', i);
+        svgEl.setAttribute('tabindex', '0');
+        svgEl.setAttribute('aria-label', `Forma ${i+1}: nota ${note}${octave}`);
+
+        svg.appendChild(svgEl);
+
+        const shape = new ResonanceShape(
+          i, shapeType, positions[i].x, positions[i].y, baseSize, colorSet, note, octave, rotation
+        );
+        shapes.push(shape);
+      }
+
+      // Create connections (fully connected graph for small n, else sparse)
+      for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+          // Connect if close enough or always for small sets
+          const dx = shapes[i].x - shapes[j].x;
+          const dy = shapes[i].y - shapes[j].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (n <= 6 || dist < 220) {
+            connections.push({from: i, to: j, strength: 1});
+          }
+        }
+      }
+    }
+
+    function drawConnections(svg) {
+      // Remove old connections
+      const oldLines = svg.querySelectorAll('.conn-line');
+      oldLines.forEach(line => line.remove());
+
+      // Draw lines between connected shapes
+      connections.forEach(conn => {
+        const from = shapes[conn.from];
+        const to = shapes[conn.to];
+        if (!from || !to) return;
+
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('class', 'conn-line');
+        line.setAttribute('x1', from.x);
+        line.setAttribute('y1', from.y);
+        line.setAttribute('x2', to.x);
+        line.setAttribute('y2', to.y);
+        line.setAttribute('stroke', '#8fffb3');
+        line.setAttribute('stroke-opacity', '0.18');
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('filter', 'url(#blur1)');
+        svg.insertBefore(line, svg.firstChild.nextSibling); // after background rect
+      });
+
+      // Add blur filter for glow effect
+      let filter = svg.querySelector('#blur1');
+      if (!filter) {
+        filter = document.createElementNS(svgNS, 'filter');
+        filter.id = 'blur1';
+        const gaussian = document.createElementNS(svgNS, 'feGaussianBlur');
+        gaussian.setAttribute('stdDeviation', '3');
+        filter.appendChild(gaussian);
+        svg.querySelector('defs').appendChild(filter);
+      }
+    }
+
+    function activateShape(idx, userInitiated = false) {
+      const shape = shapes[idx];
+      if (!shape || shape.glow) return;
+
+      shape.glow = true;
+      shape.comboActive = userInitiated;
+      shape.color = shape.colorSet.hover;
+
+      // Play sound for this shape
+      const freq = freqFromNote(shape.note, shape.octave);
+      const waveType = ['sine', 'triangle', 'square', 'sawtooth'][
+        (idx + shape.octave + NOTES.indexOf(shape.note)) % 4
+      ];
+      const accent = userInitiated;
+      playTone({
+        freq,
+        duration: 0.35 + Math.random()*0.15,
+        type: waveType,
+        accent,
+        cutoffMult: 0.8 + Math.random()*0.35
+      });
+
+      // Visual feedback: slight scale bounce
+      shape.size = shape.baseSize * 1.12;
+      setTimeout(() => {
+        if (shape) {
+          shape.glow = false;
+          shape.color = shape.colorSet.idle;
+          shape.size = shape.baseSize;
+        }
+      }, 550 + Math.random()*200);
+
+      // If user initiated, update score/combo
+      if (userInitiated) {
+        const now = Date.now();
+        if (now - lastComboTime < 1200) {
+          combo++;
+        } else {
+          combo = 0;
+        }
+        lastComboTime = now;
+
+        score += 10 + Math.min(combo * 5, 40);
+        scoreEl.textContent = score;
+        if (combo > 0) {
+          comboEl.innerHTML = `_combo x${combo + 1}_`;
+          comboEl.style.opacity = '1';
+          setTimeout(() => {
+            comboEl.style.opacity = '0.3';
+          }, 800);
+        } else {
+          comboEl.innerHTML = '';
+        }
+      }
+
+      // Resonate with neighbors
+      connections
+        .filter(conn => conn.from === idx || conn.to === idx)
+        .forEach(conn => {
+          const neighborIdx = conn.from === idx ? conn.to : conn.from;
+          const neighbor = shapes[neighborIdx];
+          if (!neighbor || neighbor.glow) return;
+
+          // Neighbor gets a softer activation
+          setTimeout(() => {
+            neighbor.glow = true;
+            neighbor.color = neighbor.colorSet.hover;
+            // Neighbor plays softer, shorter
+            const nFreq = freqFromNote(
+              neighbor.note,
+              neighbor.octave + (Math.random() > 0.7 ? 1 : 0)
+            );
+            playTone({
+              freq: nFreq,
+              duration: 0.18 + Math.random()*0.1,
+              type: ['sine', 'triangle'][Math.floor(Math.random()*2)],
+              accent: false,
+              cutoffMult: 0.6 + Math.random()*0.2
+            });
+
+            setTimeout(() => {
+              if (neighbor) {
+                neighbor.glow = false;
+                neighbor.color = neighbor.colorSet.idle;
+              }
+            }, 320 + Math.random()*120);
+          }, 80 + Math.random()*60);
+        });
+    }
+
+    function handlePointerDown(idx) {
+      activateShape(idx, true);
+      // Slight spring displacement for fun
+      const shape = shapes[idx];
+      if (shape) {
+        shape.targetX = shape.x + randomBetween(-22, 22);
+        shape.targetY = shape.y + randomBetween(-18, 18);
+        setTimeout(() => {
+          if (shape) {
+            shape.targetX = shape.x;
+            shape.targetY = shape.y;
+          }
+        }, 400);
+      }
+    }
+
+    function gameLoop() {
+      // Animate all shapes
+      const now = Date.now();
+      shapes.forEach(shape => {
+        shape.update(0.016);
+        shape.render();
+      });
+
+      // Animate connections? (static for now)
+      animationFrame = requestAnimationFrame(gameLoop);
+    }
+
+    function setupEventListeners(svg) {
+      // Mouse and touch events for each shape
+      shapes.forEach((shape, i) => {
+        const el = shape.element;
+        if (!el) return;
+
+        // Desktop
+        el.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          handlePointerDown(i);
+        });
+
+        el.addEventListener('mouseover', () => {
+          if (!shape.glow) {
+            shape.color = shape.colorSet.hover;
+            shape.size = shape.baseSize * 1.06;
+          }
+        });
+
+        el.addEventListener('mouseout', () => {
+          if (!shape.glow) {
+            shape.color = shape.colorSet.idle;
+            shape.size = shape.baseSize;
+          }
+        });
+
+        // Keyboard accessibility
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handlePointerDown(i);
+          }
+        });
+
+        // Touch
+        el.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          handlePointerDown(i);
+        }, {passive: false});
+      });
+
+      // Click outside resets focus
+      svg.addEventListener('mousedown', (e) => {
+        if (e.target === svg) {
+          // Optionally: randomize shapes slightly
+        }
+      });
+
+      // Responsive resize
+      window.addEventListener('resize', () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        // Reposition shapes proportionally
+        const oldW = width, oldH = height;
+        // We'll recreate for simplicity
+        resetGame();
+      });
+    }
+
+    function resetGame() {
+      cancelAnimationFrame(animationFrame);
+      // Remove SVG
+      const oldSvg = document.querySelector('svg');
+      if (oldSvg) oldSvg.remove();
+      score = 0;
+      combo = 0;
+      lastComboTime = 0;
+      scoreEl.textContent = '0';
+      comboEl.innerHTML = '';
+      // Recreate
+      const svg = createSVG();
+      createShapes(svg, 7 + Math.floor(Math.random()*2)); // 7-8 shapes, slightly different each time
+      drawConnections(svg);
+      setupEventListeners(svg);
+      animationFrame = requestAnimationFrame(gameLoop);
+
+      // Optionally randomize initial positions with a gentle animation
+      shapes.forEach(shape => {
+        shape.targetX = shape.x + randomBetween(-30, 30);
+        shape.targetY = shape.y + randomBetween(-25, 25);
+      });
+      setTimeout(() => {
+        shapes.forEach(s => { s.targetX = s.x; s.targetY = s.y; });
+      }, 1200);
+    }
+
+    // ====== INITIALIZE ======
+    function init() {
+      const svg = createSVG();
+      createShapes(svg, 7);
+      drawConnections(svg);
+      setupEventListeners(svg);
+      animationFrame = requestAnimationFrame(gameLoop);
+
+      resetBtn.addEventListener('click', resetGame);
+
+      // Optional: gentle intro animation
+      setTimeout(() => {
+        shapes.forEach(s => {
+          s.targetX = s.x;
+          s.targetY = s.y;
+        });
+      }, 1000);
+    }
+
+    // Mobile: only initialize audio on first user gesture
+    document.body.addEventListener('mousedown', () => initAudio(), {once: true});
+    document.body.addEventListener('touchstart', () => initAudio(), {once: true, passive: false});
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
