@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Borboletário — Jogo</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #a8e6cf; margin:0; }
+    .container { max-width:600px; margin:32px auto; background:#fff9; border-radius:16px; padding:28px; box-shadow:0 2px 16px #004d3733; }
+    h1 { text-align:center; color:#2e7d32; }
+    .status { text-align:center; margin-bottom:14px; color:#357a38; }
+    .stage { text-align:center; margin:18px 0; font-size:1.3em; color:#00695c; }
+    .butterfly-img { margin:14px auto; display:block; width:180px; height:120px; background:#f1f8e9; border-radius:12px; border:2px solid #b2ff59; margin-bottom:10px; }
+    .actions { text-align:center; margin:18px 0; }
+    button { background:#7cb342; color:white; border:none; padding:10px 22px; margin:0 6px; font-size:1em; border-radius:6px; cursor:pointer; }
+    button:disabled { background:#c8e6c9; color:#aaa; cursor:not-allowed; }
+    .gallery { margin-top:28px; border-top:1px dashed #8bc34a; padding-top:12px; }
+    .gallery-title { font-weight:bold; color:#357a38; }
+    .miniatures { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+    .mini { width:54px; height:36px; border-radius:6px; border:2px solid #a5d6a7; background:#f5fff3; display:flex; align-items:center; justify-content:center; font-size:0.75em; position:relative; }
+    .mini.rare { border-color:#ffd600; box-shadow:0 0 6px #ffd600aa; }
+    .mini-label { position:absolute; bottom:0; left:0; right:0; background:rgba(255,255,255,0.8); font-size:0.6em; color:#33691e; font-weight:bold; text-align:center; border-radius:0 0 6px 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Borboletário 🦋</h1>
+    <div class="status" id="status">Carregando...</div>
+    <div class="stage" id="stage"></div>
+    <div class="butterfly-img" id="img"></div>
+    <div class="actions" id="actions"></div>
+    <div class="gallery">
+      <div class="gallery-title">Galeria de espécies</div>
+      <div class="miniatures" id="gallery"></div>
+    </div>
+  </div>
+  <script>
+    // Config
+    const API = 'http://localhost:5000/api';
+    const USER = 'demo';
+
+    // Estado local
+    let currentButterfly = null;
+    let currentStageIdx = 0;
+    let stageTimeLeft = 0;
+    let stageTimer = null;
+    const STAGES = ['ovo','larva','casulo','adulto'];
+    const SPECIES = [
+      {id:'monarca', name:'Monarca', color1:'#ffb74d', color2:'#ffd54f', pattern:'stripes', size:'médio'},
+      {id:'azulada', name:'Azul‑céu', color1:'#4fc3f7', color2:'#a5d6a7', pattern:'spots', size:'pequeno'},
+      {id:'nocturna', name:'Nocturna', color1:'#7e57c2', color2:'#b39ddb', pattern:'plain', size:'médio'}
+    ];
+
+    // SVG gerador
+    function makeSVG(traits, stage) {
+      const w=180, h=120;
+      if(stage!=='adulto') {
+        return `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="${w}" height="${h}" fill="#e0f7fa"/><text x="${w/2}" y="${h/2}" font-size="26" fill="#00695c" text-anchor="middle" dominant-baseline="middle">${stage}</text></svg>`;
+      }
+      let wings='';
+      if(traits.pattern==='stripes') {
+        wings=`<rect x="0" y="0" width="${w/2}" height="${h}" fill="${traits.color1}"/><rect x="${w/2}" y="0" width="${w/2}" height="${h}" fill="${traits.color2}"/><line x1="90" y1="10" x2="90" y2="${h-10}" stroke="#222" stroke-width="3"/>`;
+      } else if(traits.pattern==='spots') {
+        let s=''; for(let i=0;i<7;i++) s+=`<circle cx="${40+Math.random()*100}" cy="${20+Math.random()*70}" r="4" fill="#222" fill-opacity="0.3"/>`;
+        wings=`<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/>${s}`;
+      } else {
+        wings=`<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/>`;
+      }
+      const body=`<ellipse cx="${w/2}" cy="${h/2}" rx="10" ry="18" fill="#333"/><ellipse cx="${w/2}" cy="${h/2}" rx="6" ry="10" fill="${traits.color2}"/>`;
+      return `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">${wings}${body}</svg>`;
+    }
+
+    // Timer de fase
+    function startTimer(seconds) {
+      stopTimer();
+      stageTimeLeft = seconds;
+      function tick() {
+        stageTimeLeft--;
+        render();
+        if(stageTimeLeft<=0) { stopTimer(); advanceStage(); }
+        else { stageTimer = setTimeout(tick, 1000); }
+      }
+      stageTimer = setTimeout(tick, 1000);
+    }
+    function stopTimer() { if(stageTimer) clearTimeout(stageTimer); stageTimer=null; }
+
+    // API helpers
+    async function loadGallery() {
+      const r = await fetch(`${API}/butterflies?user_id=${USER}`);
+      return r.ok ? await r.json() : [];
+    }
+    async function createButterfly(data) {
+      const r = await fetch(`${API}/butterflies`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+      return r.ok ? await r.json() : null;
+    }
+    async function advanceButterfly(id) {
+      const r = await fetch(`${API}/butterflies/${id}/advance`, {method:'POST'});
+      return r.ok ? await r.json() : null;
+    }
+
+    // Renderização
+    async function render() {
+      // galeria
+      const gallery = await loadGallery();
+      document.getElementById('gallery').innerHTML = gallery.map(b=>{
+        const mini = `<svg width="54" height="36" xmlns="http://www.w3.org/2000/svg">${makeSVG_mini(b.traits)}</svg>`;
+        return `<div class="mini${b.rare?' rare':''}">${mini}<span class="mini-label">${b.base_species||'Híbrida'}</span></div>`;
+      }).join('');
+      // borboleta atual
+      if(currentButterfly) {
+        const idx = STAGES.indexOf(currentButterfly.stage);
+        currentStageIdx = idx;
+        document.getElementById('stage').textContent = currentButterfly.stage;
+        document.getElementById('img').innerHTML = makeSVG(currentButterfly.traits, currentButterfly.stage);
+        // status
+        let status = '';
+        if(currentButterfly.stage==='ovo') status=`Ovo: aguarde ${stageTimeLeft}s.`;
+        else if(currentButterfly.stage==='larva') status=`Lagarta: alimente para crescer (${stageTimeLeft}s).`;
+        else if(currentButterfly.stage==='casulo') status=`Casulo: proteja (${stageTimeLeft}s).`;
+        else if(currentButterfly.stage==='adulto') status=`Adulto! 🦋 <br><b>Espécie:</b> ${currentButterfly.base_species||'Híbrida'}`;
+        document.getElementById('status').innerHTML = status;
+        // ações
+        renderActions(gallery);
+      } else {
+        document.getElementById('stage').textContent = '';
+        document.getElementById('img').innerHTML = '';
+        document.getElementById('status').innerHTML = 'Crie uma borboleta:';
+        renderActions(gallery);
+      }
+    }
+    function makeSVG_mini(traits) {
+      const w=54, h=36;
+      return `<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/><ellipse cx="${w/2}" cy="${h/2}" rx="5" ry="8" fill="#333"/><ellipse cx="${w/2}" cy="${h/2}" rx="3" ry="5" fill="${traits.color2}"/>`;
+    }
+
+    // Ações (botões)
+    async function renderActions(gallery) {
+      const actions = document.getElementById('actions');
+      actions.innerHTML = '';
+      if(!currentButterfly) {
+        // escolha de espécie
+        SPECIES.forEach(spec=>{
+          const btn = document.createElement('button');
+          btn.textContent = `Criar ${spec.name}`;
+          btn.onclick = ()=>startCreation(spec);
+          actions.appendChild(btn);
+        });
+      } else {
+        const stage = currentButterfly.stage;
+        if(stage==='ovo') {
+          const btn=document.createElement('button');
+          btn.textContent='Aquecer';
+          btn.onclick=advanceStage;
+          btn.disabled=stageTimeLeft>2;
+          actions.appendChild(btn);
+        } else if(stage==='larva' || stage==='casulo') {
+          const feed=document.createElement('button');
+          feed.textContent=stage==='larva'?' alimentar 🍃':' proteger 🛡️';
+          feed.onclick=()=>{
+            showTooltip('Ação realizada!');
+            stageTimeLeft=Math.max(1, stageTimeLeft-2);
+            render();
+          };
+          actions.appendChild(feed);
+          const next=document.createElement('button');
+          next.textContent='Avançar';
+          next.onclick=advanceStage;
+          next.disabled=stageTimeLeft>2;
+          actions.appendChild(next);
+        } else if(stage==='adulto') {
+          // acasalar só se houver outra adulta
+          const partners = gallery.filter(b=>b.id!==currentButterfly.id);
+          const canMate = partners.length>0;
+          const mateBtn=document.createElement('button');
+          mateBtn.textContent=canMate?'Acasalar 🥰':'Sem parceiro';
+          mateBtn.disabled=!canMate;
+          mateBtn.onclick=canMate?()=>openMateDialog(partners):null;
+          actions.appendChild(mateBtn);
+
+          const newBtn=document.createElement('button');
+          newBtn.textContent='Nova borboleta';
+          newBtn.onclick=()=>{ stopTimer(); currentButterfly=null; render(); };
+          actions.appendChild(newBtn);
+        }
+      }
+    }
+
+    // Ciclo de vida
+    async function startCreation(spec) {
+      // variação de cor/padrão
+      const traits = {...spec};
+      if(Math.random()<0.2) traits.color1=randomColor(traits.color1);
+      if(Math.random()<0.2) traits.color2=randomColor(traits.color2);
+      if(Math.random()<0.15) traits.pattern=['stripes','spots','plain'][Math.floor(Math.random()*3)];
+      if(Math.random()<0.1) traits.size=['pequeno','médio','grande'][Math.floor(Math.random()*3)];
+
+      const id = 'b-'+Date.now()+'-'+Math.floor(Math.random()*1e5);
+      const data = {id, user_id:USER, base_species:spec.id, stage:'ovo', generation:1, traits, rare:0};
+      const res = await createButterfly(data);
+      if(res) {
+        currentButterfly = {...data, parents:null};
+        currentStageIdx=0;
+        stageTimeLeft=6;
+        startTimer(6);
+        render();
+      }
+    }
+    async function advanceStage() {
+      if(!currentButterfly) return;
+      stopTimer();
+      if(currentButterfly.stage==='adulto') return;
+      const updated = await advanceButterfly(currentButterfly.id);
+      if(updated) {
+        currentButterfly.stage = updated.stage;
+        currentStageIdx = STAGES.indexOf(updated.stage);
+        // tempo por fase
+        const times = {ovo:6, larva:8, casulo:10, adulto:20};
+        stageTimeLeft = times[currentButterfly.stage] || 6;
+        startTimer(stageTimeLeft);
+        render();
+      }
+    }
+
+    // Acasalamento
+    function openMateDialog(partners) {
+      const dialog = document.createElement('div');
+      dialog.style.position='fixed';
+      dialog.style.left='0'; dialog.style.top='0';
+      dialog.style.width='100vw'; dialog.style.height='100vh';
+      dialog.style.background='rgba(33,33,33,0.5)';
+      dialog.style.zIndex='1000';
+      dialog.style.display='flex';
+      dialog.style.alignItems='center';
+      dialog.style.justifyContent='center';
+      let html=`<div style="background:white;padding:22px;border-radius:12px;min-width:240px;text-align:center;"><b>Escolher parceiro(a)</b><div style="margin:10px 0;">`;
+      partners.forEach(b=>{
+        html+=`<div style="margin:5px;"><span>${b.base_species||'Híbrida'}</span> <button data-id="${b.id}" style="background:#7cb342;color:white;border:none;padding:6px 14px;border-radius:5px;">Escolher</button></div>`;
+      });
+      html+=`</div><button onclick="this.parentElement.parentElement.remove()" style="background:#e0e0e0;color:#444;border:none;padding:6px 16px;border-radius:5px;margin-top:8px;">Cancelar</button></div>`;
+      dialog.innerHTML=html;
+      document.body.appendChild(dialog);
+      setTimeout(()=>{
+        [...dialog.querySelectorAll('button[data-id]')].forEach(btn=>{
+          btn.onclick=async()=>{
+            const partnerId=btn.getAttribute('data-id');
+            dialog.remove();
+            await mateWith(partnerId);
+          };
+        });
+      },10);
+    }
+    async function mateWith(partnerId) {
+      // buscar parceiro
+      const gallery = await loadGallery();
+      const partner = gallery.find(b=>b.id===partnerId);
+      if(!partner) return;
+      // herança
+      function mix(a,b) {
+        if(typeof a==='string' && a.startsWith('#')) return blendColors(a,b,0.5+(Math.random()-0.5)*0.25);
+        return Math.random()<0.5?a:b;
+      }
+      function blendColors(a,b,r) {
+        const [ra,ga,ba]=hexToRgb(a), [rb,gb,bb]=hexToRgb(b);
+        return rgbToHex(ra*(1-r)+rb*r, ga*(1-r)+gb*r, ba*(1-r)+bb*r);
+      }
+      const childTraits = {
+        color1: mix(currentButterfly.traits.color1, partner.traits.color1),
+        color2: mix(currentButterfly.traits.color2, partner.traits.color2),
+        pattern: mix(currentButterfly.traits.pattern, partner.traits.pattern),
+        size: mix(currentButterfly.traits.size, partner.traits.size)
+      };
+      if(Math.random()<0.08) {
+        childTraits.pattern=['stripes','spots','plain'][Math.floor(Math.random()*3)];
+        childTraits.color1=randomColor('#ff0',60,220);
+      }
+      const id='b-filho-'+Date.now()+'-'+Math.floor(Math.random()*1e6);
+      const data={
+        id, user_id:USER, parents:[currentButterfly.id, partnerId], base_species:'híbrida',
+        stage:'ovo', generation:Math.max(currentButterfly.generation||1, partner.generation||1)+1,
+        traits:childTraits, rare:(Math.random()<0.07)?1:0
+      };
+      const res=await createButterfly(data);
+      if(res) {
+        stopTimer();
+        currentButterfly={...data, parents:[currentButterfly.id, partnerId]};
+        currentStageIdx=0;
+        stageTimeLeft=6;
+        startTimer(6);
+        showTooltip('Nasceu uma nova borboleta! 🥚');
+      }
+    }
+
+    // Utils cores
+    function hexToRgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.replace(/([0-9a-f])/gi,'$1$1');return[parseInt(hex.substr(0,2),16),parseInt(hex.substr(2,2),16),parseInt(hex.substr(4,2),16)];}
+    function rgbToHex(r,g,b){r=Math.round(r);g=Math.round(g);b=Math.round(b);r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);}
+    function randomColor(base,min=100,max=230){const[r,g,b]=hexToRgb(base);return rgbToHex(r+(Math.random()-0.5)*40,g+(Math.random()-0.5)*40,b+(Math.random()-0.5)*40);}
+
+    // Tooltip
+    function showTooltip(msg){
+      let t=document.getElementById('tooltip');
+      if(!t){t=document.createElement('div');t.id='tooltip';t.style.position='fixed';t.style.zIndex='2000';t.style.background='#222';t.style.color='#fff';t.style.borderRadius='6px';t.style.padding='6px 14px';t.style.opacity='0.95';document.body.appendChild(t);}
+      t.textContent=msg;t.style.display='block';t.style.left=(200+Math.random()*200)+'px';t.style.top=(80+Math.random()*80)+'px';
+      setTimeout(()=>t.style.display='none',1200);
+    }
+
+    // Inicializar
+    window.addEventListener('keydown',e=>{if(e.key==='Enter'&&currentButterfly){advanceStage();}});
+    (async function(){ await render(); })();
+
+  </script>
+</body>
+</html>
