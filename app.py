@@ -7,7 +7,6 @@ from flask import Flask, request, jsonify, g
 from flask_cors import CORS
 
 DATABASE = 'borboletario.db'
-DEBUG = True
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -20,10 +19,10 @@ SPECIES = {
 }
 STAGES = ['ovo', 'larva', 'casulo', 'adulto']
 
-# --- Criação do banco inline ---
+# --- Banco inline ---
 def init_db():
     if os.path.exists(DATABASE):
-        return  # já existe
+        return
     with sqlite3.connect(DATABASE) as conn:
         conn.executescript("""
         CREATE TABLE butterflies (
@@ -91,7 +90,7 @@ def insert_butterfly(butterfly):
     ))
     db.commit()
 
-# --- Rotas ---
+# --- Rota: galeria adultas ---
 @app.route('/api/butterflies', methods=['GET'])
 def get_gallery():
     user_id = request.args.get('user_id', 'demo')
@@ -99,10 +98,11 @@ def get_gallery():
         SELECT * FROM butterflies
         WHERE user_id = ? AND stage = 'adulto'
         ORDER BY created_at DESC
-        LIMIT 100
+        LIMIT 200
     ''', (user_id,))
     return jsonify(butterflies)
 
+# --- Rota: criar ---
 @app.route('/api/butterflies', methods=['POST'])
 def create_butterfly():
     data = request.get_json()
@@ -110,12 +110,10 @@ def create_butterfly():
     for r in required:
         if r not in data:
             return jsonify({'error': f'Missing {r}'}), 400
-
     parents = data.get('parents')
     base_species = data.get('base_species')
     if parents and not base_species:
         base_species = 'híbrida'
-
     butterfly = {
         'id': data['id'],
         'user_id': data.get('user_id', 'demo'),
@@ -133,16 +131,15 @@ def create_butterfly():
     except sqlite3.IntegrityError:
         return jsonify({'error': 'ID already exists'}), 409
 
+# --- Rota: avançar fase ---
 @app.route('/api/butterflies/<butterfly_id>/advance', methods=['POST'])
 def advance_stage(butterfly_id):
     b = query_db('SELECT * FROM butterflies WHERE id = ?', (butterfly_id,), one=True)
     if not b:
         return jsonify({'error': 'Not found'}), 404
-
     curr_idx = STAGES.index(b['stage'])
     if curr_idx >= len(STAGES)-1:
         return jsonify({'error': 'Already adult'}), 400
-
     next_stage = STAGES[curr_idx + 1]
     db = get_db()
     db.execute('UPDATE butterflies SET stage=? WHERE id=?', (next_stage, butterfly_id))
@@ -150,7 +147,56 @@ def advance_stage(butterfly_id):
     updated = query_db('SELECT * FROM butterflies WHERE id = ?', (butterfly_id,), one=True)
     return jsonify(updated)
 
-# --- Inicializar banco na primeira execução ---
+# --- Rota: atualizar traits (pós‑mini‑jogo/mutação) ---
+@app.route('/api/butterflies/<butterfly_id>/traits', methods=['POST'])
+def update_traits(butterfly_id):
+    data = request.get_json()
+    if not data or 'traits' not in data:
+        return jsonify({'error': 'Missing traits'}), 400
+    db = get_db()
+    db.execute('UPDATE butterflies SET traits=? WHERE id=?', (json.dumps(data['traits']), butterfly_id))
+    db.commit()
+    b = query_db('SELECT * FROM butterflies WHERE id = ?', (butterfly_id,), one=True)
+    return jsonify(b)
+
+# --- Rota: ranking de raridade (global) ---
+@app.route('/api/ranking', methods=['GET'])
+def ranking():
+    # Conta quantas borboletas adultas cada espécie/combinação tem (quanto mais rara, menos cópias)
+    # Retorna top 20 mais raras (menos frequentes)
+    r = query_db('''
+        SELECT
+            traits,
+            COUNT(*) as count,
+            MIN(created_at) as first_created
+        FROM butterflies
+        WHERE stage='adulto'
+        GROUP BY traits
+        ORDER BY count ASC, first_created ASC
+        LIMIT 20
+    ''')
+    # Enriquece com display name
+    def key(b):
+        t = b['traits']
+        base = t.get('base_species', 'Híbrida')
+        pat = t.get('pattern','')
+        sz = t.get('size','')
+        return f"{base} {pat} {sz}".strip()
+    enriched = []
+    seen = set()
+    for b in r:
+        t = b['traits']
+        k = key(b)
+        if k in seen: continue
+        seen.add(k)
+        enriched.append({
+            'name': k,
+            'count': b['count'],
+            'sample_traits': t
+        })
+    return jsonify(enriched)
+
+# --- Inicialização ---
 @app.before_first_request
 def setup():
     init_db()

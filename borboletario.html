@@ -2,37 +2,117 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Borboletário — Jogo</title>
+  <title>Borboletário — Jogo Completo</title>
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: #a8e6cf; margin:0; }
-    .container { max-width:600px; margin:32px auto; background:#fff9; border-radius:16px; padding:28px; box-shadow:0 2px 16px #004d3733; }
-    h1 { text-align:center; color:#2e7d32; }
-    .status { text-align:center; margin-bottom:14px; color:#357a38; }
-    .stage { text-align:center; margin:18px 0; font-size:1.3em; color:#00695c; }
-    .butterfly-img { margin:14px auto; display:block; width:180px; height:120px; background:#f1f8e9; border-radius:12px; border:2px solid #b2ff59; margin-bottom:10px; }
-    .actions { text-align:center; margin:18px 0; }
-    button { background:#7cb342; color:white; border:none; padding:10px 22px; margin:0 6px; font-size:1em; border-radius:6px; cursor:pointer; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg,#a8e6cf 0%,#dcedc8 100%); margin:0; min-height:100vh; }
+    .container { max-width:680px; margin:32px auto; background:#fff9; border-radius:18px; padding:28px 32px 22px 32px; box-shadow:0 4px 28px #004d3722; }
+    h1 { text-align:center; color:#2e7d32; margin-bottom:10px; }
+    .tabs { display:flex; gap:6px; margin-bottom:18px; justify-content:center; }
+    .tab { padding:10px 22px; border-radius:8px; cursor:pointer; background:#e8f5e9; color:#357a38; font-weight:500; border:none; }
+    .tab.active { background:#7cb342; color:white; box-shadow:0 2px 8px #689f3844; }
+    .section { display:none; }
+    .section.active { display:block; animation:fadein 0.3s; }
+    @keyframes fadein { from{opacity:0.4} to{opacity:1} }
+    .status { text-align:center; margin-bottom:12px; color:#357a38; font-size:1.05em; }
+    .stage { text-align:center; margin:12px 0 8px 0; font-size:1.25em; color:#00695c; font-weight:bold; }
+    .butterfly-img { margin:14px auto; display:block; width:200px; height:140px; background:#f1f8e9; border-radius:14px; border:2px solid #b2ff59; box-shadow:0 2px 10px #004d5c11; position:relative; }
+    .butterfly-img.flying { animation:fly 2.2s infinite alternate; }
+    @keyframes fly { 0%{transform:translateY(0px) rotate(0deg);} 30%{transform:translateY(-14px) rotate(2deg);} 70%{transform:translateY(10px) rotate(-2deg);} 100%{transform:translateY(0px) rotate(0deg);} }
+    .actions { text-align:center; margin:18px 0 6px 0; }
+    button { background:#7cb342; color:white; border:none; padding:10px 22px; margin:0 6px; font-size:1em; border-radius:6px; cursor:pointer; transition:background 0.18s; }
+    button:active { background:#558b2f; }
     button:disabled { background:#c8e6c9; color:#aaa; cursor:not-allowed; }
-    .gallery { margin-top:28px; border-top:1px dashed #8bc34a; padding-top:12px; }
-    .gallery-title { font-weight:bold; color:#357a38; }
-    .miniatures { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
-    .mini { width:54px; height:36px; border-radius:6px; border:2px solid #a5d6a7; background:#f5fff3; display:flex; align-items:center; justify-content:center; font-size:0.75em; position:relative; }
-    .mini.rare { border-color:#ffd600; box-shadow:0 0 6px #ffd600aa; }
-    .mini-label { position:absolute; bottom:0; left:0; right:0; background:rgba(255,255,255,0.8); font-size:0.6em; color:#33691e; font-weight:bold; text-align:center; border-radius:0 0 6px 6px; }
+    .miniatures { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px; }
+    .mini { width:60px; height:42px; border-radius:7px; border:2px solid #a5d6a7; background:#f5fff3; display:flex; align-items:center; justify-content:center; font-size:0.75em; position:relative; box-shadow:0 1px 3px #8bc34a22; }
+    .mini.rare { border-color:#ffd600; box-shadow:0 0 8px #ffd600aa; filter:brightness(1.12); }
+    .mini-label { position:absolute; bottom:0; left:0; right:0; background:rgba(255,255,255,0.85); font-size:0.6em; color:#33691e; font-weight:bold; border-radius:0 0 7px 7px; text-align:center; }
+    .trait-editor { margin:14px 0; padding:14px; background:#f3ffe6; border-radius:10px; display:flex; flex-wrap:wrap; gap:16px; align-items:center; }
+    .trait-editor label { font-size:0.95em; color:#2e7d32; margin-right:6px; }
+    .color-picker { display:flex; gap:4px; }
+    .color-btn { width:26px; height:26px; border-radius:5px; border:2px solid #8bc34a; cursor:pointer; }
+    .color-btn.selected { border:3px solid #ffd600; box-shadow:0 0 6px #ffd60088; }
+    .ranking-table { width:100%; border-collapse:collapse; margin-top:10px; }
+    .ranking-table th, .ranking-table td { padding:6px 10px; text-align:left; border-bottom:1px solid #e0e0e0; }
+    .ranking-table th { color:#2e7d32; background:#e8f5e9; }
+    .tooltip { position:fixed; z-index:2000; background:#222; color:#fff; border-radius:6px; padding:6px 16px; opacity:0.95; pointer-events:none; left:200px; top:90px; }
+    /* Mini‑jogo: folha arrastável */
+    .leaf-drag-area { display:flex; align-items:center; gap:20px; justify-content:center; margin:10px 0; }
+    .leaf { width:34px; height:34px; cursor:pointer; transition:transform 0.1s; user-select:none; }
+    .leaf.dragging { opacity:0.6; transform:scale(1.15); }
+    .leaf-target { width:52px; height:52px; border:3px dashed #8bc34a; border-radius:50%; background:#f9fff7; display:flex; align-items:center; justify-content:center; margin-left:12px; }
+    /* Mini‑jogo: predador */
+    .predator-game { text-align:center; }
+    .predator-img { width:70px; height:70px; margin:10px auto; cursor:pointer; transition:scale 0.08s; }
+    .predator-img:active { scale:0.92; }
+    .predator-meter { width:180px; height:18px; background:#ffe0b2; border-radius:9px; margin:8px auto 0 auto; border:1px solid #ffab00; position:relative; }
+    .predator-meter-fill { height:100%; background:linear-gradient(90deg,#ffab00,#ffd600); border-radius:9px; width:100%; transition:width 0.2s; }
+    .predator-meter-empty { position:absolute; left:0; top:0; width:100%; height:100%; background:rgba(255,0,0,0.10); border-radius:9px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Borboletário 🦋</h1>
-    <div class="status" id="status">Carregando...</div>
-    <div class="stage" id="stage"></div>
-    <div class="butterfly-img" id="img"></div>
-    <div class="actions" id="actions"></div>
-    <div class="gallery">
-      <div class="gallery-title">Galeria de espécies</div>
+    <h1>Borboletário 🦋 — Jogo Completo</h1>
+    <div class="tabs">
+      <button class="tab active" data-tab="criar">Criar</button>
+      <button class="tab" data-tab="galeria">Galeria</button>
+      <button class="tab" data-tab="ranking">Ranking</button>
+    </div>
+
+    <!-- ===== TAB CRIAR ===== -->
+    <div id="tab-criar" class="section active">
+      <div class="status" id="status">Crie sua borboleta personalizada.</div>
+      <div class="stage" id="stage"></div>
+      <div class="butterfly-img" id="img"></div>
+      <div class="actions" id="actions"></div>
+
+      <!-- Editor de traits -->
+      <div class="trait-editor" id="trait-editor" style="display:none;">
+        <label>Cor 1:</label>
+        <div class="color-picker">
+          <input type="color" id="color1-picker" value="#ffb74d">
+        </div>
+        <label>Cor 2:</label>
+        <div class="color-picker">
+          <input type="color" id="color2-picker" value="#ffd54f">
+        </div>
+        <label>Padrão:</label>
+        <select id="pattern-select">
+          <option value="stripes">Listras</option>
+          <option value="spots">Pintas</option>
+          <option value="plain">Liso</option>
+        </select>
+        <label>Tamanho:</label>
+        <select id="size-select">
+          <option value="pequeno">Pequeno</option>
+          <option value="médio" selected>Médio</option>
+          <option value="grande">Grande</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ===== TAB GALERIA ===== -->
+    <div id="tab-galeria" class="section">
+      <div class="gallery-title" style="font-weight:bold;color:#357a38;margin-bottom:8px;">Suas borboletas adultas</div>
       <div class="miniatures" id="gallery"></div>
     </div>
+
+    <!-- ===== TAB RANKING ===== -->
+    <div id="tab-ranking" class="section">
+      <div style="font-weight:bold;color:#357a38;margin-bottom:8px;">Ranking de raridade (global)</div>
+      <table class="ranking-table">
+        <thead>
+          <tr><th>#</th><th>Tipo</th><th>Borboletas criadas</th></tr>
+        </thead>
+        <tbody id="ranking-body">
+          <tr><td colspan="3" style="text-align:center;color:#888;">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip" style="display:none;"></div>
+
   <script>
     // Config
     const API = 'http://localhost:5000/api';
@@ -43,6 +123,7 @@
     let currentStageIdx = 0;
     let stageTimeLeft = 0;
     let stageTimer = null;
+    let miniGameActive = false;
     const STAGES = ['ovo','larva','casulo','adulto'];
     const SPECIES = [
       {id:'monarca', name:'Monarca', color1:'#ffb74d', color2:'#ffd54f', pattern:'stripes', size:'médio'},
@@ -50,26 +131,50 @@
       {id:'nocturna', name:'Nocturna', color1:'#7e57c2', color2:'#b39ddb', pattern:'plain', size:'médio'}
     ];
 
-    // SVG gerador
-    function makeSVG(traits, stage) {
-      const w=180, h=120;
+    // SVG gerador (com animação de asas na fase adulta)
+    function makeSVG(traits, stage, isFlying=false) {
+      const w=200, h=140;
       if(stage!=='adulto') {
-        return `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="${w}" height="${h}" fill="#e0f7fa"/><text x="${w/2}" y="${h/2}" font-size="26" fill="#00695c" text-anchor="middle" dominant-baseline="middle">${stage}</text></svg>`;
+        return `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="${w}" height="${h}" fill="#e0f7fa"/><text x="${w/2}" y="${h/2}" font-size="30" fill="#00695c" text-anchor="middle" dominant-baseline="middle">${stage}</text></svg>`;
       }
+      // Asas com padrão
       let wings='';
       if(traits.pattern==='stripes') {
-        wings=`<rect x="0" y="0" width="${w/2}" height="${h}" fill="${traits.color1}"/><rect x="${w/2}" y="0" width="${w/2}" height="${h}" fill="${traits.color2}"/><line x1="90" y1="10" x2="90" y2="${h-10}" stroke="#222" stroke-width="3"/>`;
+        wings=`<rect x="0" y="0" width="${w/2}" height="${h}" fill="${traits.color1}"/><rect x="${w/2}" y="0" width="${w/2}" height="${h}" fill="${traits.color2}"/><line x1="100" y1="12" x2="100" y2="${h-12}" stroke="#222" stroke-width="3"/>`;
       } else if(traits.pattern==='spots') {
-        let s=''; for(let i=0;i<7;i++) s+=`<circle cx="${40+Math.random()*100}" cy="${20+Math.random()*70}" r="4" fill="#222" fill-opacity="0.3"/>`;
-        wings=`<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/>${s}`;
+        let s=''; for(let i=0;i<9;i++) s+=`<circle cx="${45+Math.random()*110}" cy="${28+Math.random()*75}" r="4" fill="#222" fill-opacity="0.32"/>`;
+        wings=`<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/><rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color2}" fill-opacity="0.18"/>${s}`;
       } else {
-        wings=`<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/>`;
+        wings=`<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/><rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color2}" fill-opacity="0.12"/>`;
       }
-      const body=`<ellipse cx="${w/2}" cy="${h/2}" rx="10" ry="18" fill="#333"/><ellipse cx="${w/2}" cy="${h/2}" rx="6" ry="10" fill="${traits.color2}"/>`;
+      // Corpo e antenas
+      const body=`
+        <ellipse cx="${w/2}" cy="${h/2}" rx="12" ry="20" fill="#333" />
+        <ellipse cx="${w/2}" cy="${h/2}" rx="7" ry="11" fill="${traits.color2}" />
+        <line x1="${w/2}" y1="10" x2="${w/2}" y2="2" stroke="#444" stroke-width="2"/>
+        <line x1="${w/2-4}" y1="10" x2="${w/2-14}" y2="2" stroke="#444" stroke-width="1.6"/>
+        <line x1="${w/2+4}" y1="10" x2="${w/2+14}" y2="2" stroke="#444" stroke-width="1.6"/>
+      `;
+      // Animação de asas batendo (CSS keyframes já no .butterfly-img.flying)
       return `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">${wings}${body}</svg>`;
     }
 
-    // Timer de fase
+    // --- Tabs ---
+    function setupTabs() {
+      document.querySelectorAll('.tab').forEach(btn=>{
+        btn.onclick=()=>{
+          document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
+          const tab = btn.getAttribute('data-tab');
+          document.getElementById('tab-'+tab).classList.add('active');
+          if(tab==='galeria') loadGalleryAndRender();
+          if(tab==='ranking') loadRanking();
+        };
+      });
+    }
+
+    // --- Timer de fase ---
     function startTimer(seconds) {
       stopTimer();
       stageTimeLeft = seconds;
@@ -83,7 +188,7 @@
     }
     function stopTimer() { if(stageTimer) clearTimeout(stageTimer); stageTimer=null; }
 
-    // API helpers
+    // --- API helpers ---
     async function loadGallery() {
       const r = await fetch(`${API}/butterflies?user_id=${USER}`);
       return r.ok ? await r.json() : [];
@@ -96,78 +201,202 @@
       const r = await fetch(`${API}/butterflies/${id}/advance`, {method:'POST'});
       return r.ok ? await r.json() : null;
     }
+    async function updateButterflyTraits(id, traits) {
+      const r = await fetch(`${API}/butterflies/${id}/traits`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({traits})});
+      return r.ok ? await r.json() : null;
+    }
+    async function loadRanking() {
+      const r = await fetch(`${API}/ranking`);
+      const tbody = document.getElementById('ranking-body');
+      if(r.ok) {
+        const data = await r.json();
+        if(data.length===0) {
+          tbody.innerHTML='<tr><td colspan="3" style="text-align:center;color:#888;">Nenhuma borboleta registrada.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = data.slice(0,15).map((item,i)=>`
+          <tr>
+            <td>${i+1}</td>
+            <td>
+              <span style="font-size:0.95em;color:#357a38;font-weight:500;">${item.name}</span>
+            </td>
+            <td style="color:#ffab00;font-weight:bold;">${item.count}</td>
+          </tr>
+        `).join('');
+      } else {
+        tbody.innerHTML='<tr><td colspan="3" style="text-align:center;color:#d32f2f;">Erro ao carregar ranking.</td></tr>';
+      }
+    }
 
-    // Renderização
+    // --- Renderização principal ---
     async function render() {
-      // galeria
-      const gallery = await loadGallery();
-      document.getElementById('gallery').innerHTML = gallery.map(b=>{
-        const mini = `<svg width="54" height="36" xmlns="http://www.w3.org/2000/svg">${makeSVG_mini(b.traits)}</svg>`;
-        return `<div class="mini${b.rare?' rare':''}">${mini}<span class="mini-label">${b.base_species||'Híbrida'}</span></div>`;
-      }).join('');
-      // borboleta atual
+      // Atualiza imagem e ações
+      const imgDiv = document.getElementById('img');
       if(currentButterfly) {
         const idx = STAGES.indexOf(currentButterfly.stage);
         currentStageIdx = idx;
         document.getElementById('stage').textContent = currentButterfly.stage;
-        document.getElementById('img').innerHTML = makeSVG(currentButterfly.traits, currentButterfly.stage);
-        // status
+        // Animação de voo só na fase adulta
+        imgDiv.innerHTML = makeSVG(currentButterfly.traits, currentButterfly.stage, currentButterfly.stage==='adulto');
+        imgDiv.className = 'butterfly-img' + (currentButterfly.stage==='adulto'?' flying':'');
+        // Status
         let status = '';
         if(currentButterfly.stage==='ovo') status=`Ovo: aguarde ${stageTimeLeft}s.`;
         else if(currentButterfly.stage==='larva') status=`Lagarta: alimente para crescer (${stageTimeLeft}s).`;
-        else if(currentButterfly.stage==='casulo') status=`Casulo: proteja (${stageTimeLeft}s).`;
-        else if(currentButterfly.stage==='adulto') status=`Adulto! 🦋 <br><b>Espécie:</b> ${currentButterfly.base_species||'Híbrida'}`;
+        else if(currentButterfly.stage==='casulo') status=`Casulo: proteja de predadores (${stageTimeLeft}s).`;
+        else if(currentButterfly.stage==='adulto') status=`Adulto! 🦋 <br><b>Espécie:</b> ${currentButterfly.base_species||'Híbrida'} <span style="font-size:0.9em;color:#8bc34a;">(Geração ${currentButterfly.generation||1})</span>`;
         document.getElementById('status').innerHTML = status;
-        // ações
-        renderActions(gallery);
+        // Ações
+        renderActions();
       } else {
         document.getElementById('stage').textContent = '';
-        document.getElementById('img').innerHTML = '';
-        document.getElementById('status').innerHTML = 'Crie uma borboleta:';
-        renderActions(gallery);
+        imgDiv.innerHTML = '';
+        imgDiv.className = 'butterfly-img';
+        document.getElementById('status').innerHTML = ' personalize e crie sua borboleta:';
+        renderActions();
       }
     }
-    function makeSVG_mini(traits) {
-      const w=54, h=36;
-      return `<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/><ellipse cx="${w/2}" cy="${h/2}" rx="5" ry="8" fill="#333"/><ellipse cx="${w/2}" cy="${h/2}" rx="3" ry="5" fill="${traits.color2}"/>`;
-    }
 
-    // Ações (botões)
-    async function renderActions(gallery) {
+    // --- Ações (botões + mini‑games) ---
+    async function renderActions() {
       const actions = document.getElementById('actions');
       actions.innerHTML = '';
       if(!currentButterfly) {
-        // escolha de espécie
-        SPECIES.forEach(spec=>{
-          const btn = document.createElement('button');
-          btn.textContent = `Criar ${spec.name}`;
-          btn.onclick = ()=>startCreation(spec);
-          actions.appendChild(btn);
-        });
+        // Mostrar editor de traits
+        document.getElementById('trait-editor').style.display='flex';
+        // Botão criar
+        const createBtn = document.createElement('button');
+        createBtn.textContent = 'Criar borboleta 🦋';
+        createBtn.onclick = async ()=>{
+          const traits = getTraitsFromEditor();
+          // Validação mínima
+          if(!traits.color1 || !traits.color2) { showTooltip('Escolha as duas cores!'); return; }
+          const id = 'b-'+Date.now()+'-'+Math.floor(Math.random()*1e5);
+          const data = {
+            id, user_id:USER, base_species:traits.base_species, stage:'ovo',
+            generation:1, traits, rare:0
+          };
+          const res = await createButterfly(data);
+          if(res) {
+            currentButterfly = {...data, parents:null};
+            currentStageIdx=0;
+            stageTimeLeft=6;
+            startTimer(6);
+            render();
+          }
+        };
+        actions.appendChild(createBtn);
       } else {
+        document.getElementById('trait-editor').style.display='none';
         const stage = currentButterfly.stage;
+        // Mini‑jogos por fase
         if(stage==='ovo') {
           const btn=document.createElement('button');
           btn.textContent='Aquecer';
           btn.onclick=advanceStage;
           btn.disabled=stageTimeLeft>2;
           actions.appendChild(btn);
-        } else if(stage==='larva' || stage==='casulo') {
-          const feed=document.createElement('button');
-          feed.textContent=stage==='larva'?' alimentar 🍃':' proteger 🛡️';
-          feed.onclick=()=>{
-            showTooltip('Ação realizada!');
-            stageTimeLeft=Math.max(1, stageTimeLeft-2);
-            render();
-          };
-          actions.appendChild(feed);
-          const next=document.createElement('button');
-          next.textContent='Avançar';
-          next.onclick=advanceStage;
-          next.disabled=stageTimeLeft>2;
-          actions.appendChild(next);
+        } else if(stage==='larva') {
+          // Mini‑jogo arrastar folha
+          if(!miniGameActive) {
+            miniGameActive=true;
+            const area = document.createElement('div');
+            area.className='leaf-drag-area';
+            area.innerHTML=`
+              <div style="font-size:0.95em;color:#357a38;margin-right:8px;">Arraste a folha 🍃 para alimentar:</div>
+              <img class="leaf" id="leaf" src="data:image/svg+xml;utf8,<svg width='34' height='34' xmlns='http://www.w3.org/2000/svg'><path d='M17 6c5 2 9 7 10 13 1 6-2 12-7 15-5 3-11 2-15-2-4-4-6-10-5-15 1-5 5-9 10-11z' fill='%238bc34a' stroke='%23357a38' stroke-width='2'/></svg>" draggable="false">
+              <div class="leaf-target" id="leaf-target"></div>
+            `;
+            actions.appendChild(area);
+            // Lógica de arrastar (mousedown+mousemove)
+            let leaf = area.querySelector('.leaf');
+            let isDragging=false, startX=0, startY=0, offsetX=0, offsetY=0;
+            leaf.onmousedown = (e)=>{
+              isDragging=true;
+              startX=e.clientX; startY=e.clientY;
+              const rect=leaf.getBoundingClientRect();
+              offsetX=rect.left; offsetY=rect.top;
+              leaf.classList.add('leaf.dragging');
+            };
+            document.onmousemove=(e)=>{
+              if(isDragging) {
+                // Não movemos o elemento de verdade (para não sair do DOM);
+                // apenas verificamos se o mouse está sobre o alvo
+              }
+            };
+            document.onmouseup=(e)=>{
+              if(isDragging) {
+                const target = area.querySelector('.leaf-target');
+                const rect = target.getBoundingClientRect();
+                const over = (e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom);
+                leaf.classList.remove('leaf.dragging');
+                isDragging=false;
+                if(over) {
+                  showTooltip('Lagarta alimentada!');
+                  stageTimeLeft=Math.max(1, stageTimeLeft-3);
+                  render();
+                  // reset folha (simulado)
+                }
+              }
+            };
+          }
+        } else if(stage==='casulo') {
+          // Mini‑jogo clicar para espantar predador
+          if(!miniGameActive) {
+            miniGameActive=true;
+            const area = document.createElement('div');
+            area.className='predator-game';
+            area.innerHTML=`
+              <div style="font-size:0.95em;color:#d32f2f;margin-bottom:4px;">Predador se aproxima! Clique rápido:</div>
+              <img class="predator-img" id="predator-img" src="data:image/svg+xml;utf8,<svg width='70' height='70' xmlns='http://www.w3.org/2000/svg'><circle cx='35' cy='35' r='32' fill='%23e57373'/><circle cx='28' cy='30' r='6' fill='%23222'/><circle cx='42' cy='30' r='6' fill='%23222'/><path d='M20 45 Q35 60 50 45' stroke='%23222' stroke-width='3' fill='none'/></svg>" />
+              <div class="predator-meter"><div class="predator-meter-fill" id="predator-meter" style="width:100%;"></div><div class="predator-meter-empty"></div></div>
+            `;
+            actions.appendChild(area);
+            let meter = area.querySelector('#predator-meter');
+            let power = 100;
+            let clicks=0;
+            function decrease() {
+              power=Math.max(0,power-4.5);
+              meter.style.width=power+'%';
+              if(power<=0) {
+                // Espantou!
+                showTooltip('Predador espantado!');
+                stageTimeLeft=Math.max(1, stageTimeLeft-3);
+                render();
+                miniGameActive=false;
+                area.remove();
+              }
+            }
+            let interval = setInterval(decrease, 180);
+            const img = area.querySelector('.predator-img');
+            img.onclick=()=>{
+              clicks++;
+              power=Math.min(100,power+8);
+              meter.style.width=power+'%';
+              if(power>=100) {
+                // já cheio, nada
+              }
+              // efeito visual
+              img.style.scale='0.94';
+              setTimeout(()=>img.style.scale='1',60);
+              // Se chegar a 100, considera protegido
+              if(power>=98) {
+                clearInterval(interval);
+                showTooltip('Protegido!');
+                stageTimeLeft=Math.max(1, stageTimeLeft-2);
+                setTimeout(()=>{
+                  render();
+                  miniGameActive=false;
+                  area.remove();
+                },600);
+              }
+            };
+            // Remove se fase mudar
+            setTimeout(()=>{ if(!miniGameActive) { clearInterval(interval); area.remove(); } }, 15000);
+          }
         } else if(stage==='adulto') {
-          // acasalar só se houver outra adulta
+          // Acasalar + nova
+          const gallery = await loadGallery();
           const partners = gallery.filter(b=>b.id!==currentButterfly.id);
           const canMate = partners.length>0;
           const mateBtn=document.createElement('button');
@@ -178,62 +407,60 @@
 
           const newBtn=document.createElement('button');
           newBtn.textContent='Nova borboleta';
-          newBtn.onclick=()=>{ stopTimer(); currentButterfly=null; render(); };
+          newBtn.onclick=()=>{ stopTimer(); currentButterfly=null; miniGameActive=false; render(); };
           actions.appendChild(newBtn);
         }
       }
     }
 
-    // Ciclo de vida
-    async function startCreation(spec) {
-      // variação de cor/padrão
-      const traits = {...spec};
-      if(Math.random()<0.2) traits.color1=randomColor(traits.color1);
-      if(Math.random()<0.2) traits.color2=randomColor(traits.color2);
-      if(Math.random()<0.15) traits.pattern=['stripes','spots','plain'][Math.floor(Math.random()*3)];
-      if(Math.random()<0.1) traits.size=['pequeno','médio','grande'][Math.floor(Math.random()*3)];
-
-      const id = 'b-'+Date.now()+'-'+Math.floor(Math.random()*1e5);
-      const data = {id, user_id:USER, base_species:spec.id, stage:'ovo', generation:1, traits, rare:0};
-      const res = await createButterfly(data);
-      if(res) {
-        currentButterfly = {...data, parents:null};
-        currentStageIdx=0;
-        stageTimeLeft=6;
-        startTimer(6);
-        render();
-      }
-    }
+    // --- Ciclo de vida ---
     async function advanceStage() {
       if(!currentButterfly) return;
       stopTimer();
       if(currentButterfly.stage==='adulto') return;
+      // Se estiver em mini‑jogo, encerra
+      miniGameActive=false;
+      // Avança na API
       const updated = await advanceButterfly(currentButterfly.id);
       if(updated) {
         currentButterfly.stage = updated.stage;
         currentStageIdx = STAGES.indexOf(updated.stage);
-        // tempo por fase
+        // Tempo por fase
         const times = {ovo:6, larva:8, casulo:10, adulto:20};
         stageTimeLeft = times[currentButterfly.stage] || 6;
+        miniGameActive=false; // reset mini‑jogo
         startTimer(stageTimeLeft);
         render();
       }
     }
 
-    // Acasalamento
+    // --- Editor de traits ---
+    function getTraitsFromEditor() {
+      const color1 = document.getElementById('color1-picker').value;
+      const color2 = document.getElementById('color2-picker').value;
+      const pattern = document.getElementById('pattern-select').value;
+      const size = document.getElementById('size-select').value;
+      // base_species: tenta adivinhar pela cor/padrão
+      let base = SPECIES[0].id;
+      if(color1.startsWith('#4f')||color2.startsWith('#a5')) base='azulada';
+      if(color1.startsWith('#7e')||color2.startsWith('#b3')) base='nocturna';
+      return {base_species:base, color1, color2, pattern, size};
+    }
+
+    // --- Acasalamento ---
     function openMateDialog(partners) {
       const dialog = document.createElement('div');
       dialog.style.position='fixed';
       dialog.style.left='0'; dialog.style.top='0';
       dialog.style.width='100vw'; dialog.style.height='100vh';
-      dialog.style.background='rgba(33,33,33,0.5)';
+      dialog.style.background='rgba(33,33,33,0.55)';
       dialog.style.zIndex='1000';
       dialog.style.display='flex';
       dialog.style.alignItems='center';
       dialog.style.justifyContent='center';
-      let html=`<div style="background:white;padding:22px;border-radius:12px;min-width:240px;text-align:center;"><b>Escolher parceiro(a)</b><div style="margin:10px 0;">`;
+      let html=`<div style="background:white;padding:22px;border-radius:12px;min-width:260px;text-align:center;"><b>Escolher parceiro(a)</b><div style="margin:10px 0;">`;
       partners.forEach(b=>{
-        html+=`<div style="margin:5px;"><span>${b.base_species||'Híbrida'}</span> <button data-id="${b.id}" style="background:#7cb342;color:white;border:none;padding:6px 14px;border-radius:5px;">Escolher</button></div>`;
+        html+=`<div style="margin:5px;display:flex;align-items:center;gap:8px;"><span>${b.base_species||'Híbrida'}</span><button data-id="${b.id}" style="background:#7cb342;color:white;border:none;padding:6px 14px;border-radius:5px;">Escolher</button></div>`;
       });
       html+=`</div><button onclick="this.parentElement.parentElement.remove()" style="background:#e0e0e0;color:#444;border:none;padding:6px 16px;border-radius:5px;margin-top:8px;">Cancelar</button></div>`;
       dialog.innerHTML=html;
@@ -249,13 +476,12 @@
       },10);
     }
     async function mateWith(partnerId) {
-      // buscar parceiro
       const gallery = await loadGallery();
       const partner = gallery.find(b=>b.id===partnerId);
       if(!partner) return;
-      // herança
+      // Herança com mistura e mutação
       function mix(a,b) {
-        if(typeof a==='string' && a.startsWith('#')) return blendColors(a,b,0.5+(Math.random()-0.5)*0.25);
+        if(typeof a==='string' && a.startsWith('#')) return blendColors(a,b,0.5+(Math.random()-0.5)*0.28);
         return Math.random()<0.5?a:b;
       }
       function blendColors(a,b,r) {
@@ -268,15 +494,17 @@
         pattern: mix(currentButterfly.traits.pattern, partner.traits.pattern),
         size: mix(currentButterfly.traits.size, partner.traits.size)
       };
-      if(Math.random()<0.08) {
+      // Mutação rara
+      if(Math.random()<0.10) {
         childTraits.pattern=['stripes','spots','plain'][Math.floor(Math.random()*3)];
         childTraits.color1=randomColor('#ff0',60,220);
+        childTraits.size=['pequeno','médio','grande'][Math.floor(Math.random()*3)];
       }
       const id='b-filho-'+Date.now()+'-'+Math.floor(Math.random()*1e6);
       const data={
         id, user_id:USER, parents:[currentButterfly.id, partnerId], base_species:'híbrida',
         stage:'ovo', generation:Math.max(currentButterfly.generation||1, partner.generation||1)+1,
-        traits:childTraits, rare:(Math.random()<0.07)?1:0
+        traits:childTraits, rare:(Math.random()<0.08?1:0)
       };
       const res=await createButterfly(data);
       if(res) {
@@ -284,27 +512,60 @@
         currentButterfly={...data, parents:[currentButterfly.id, partnerId]};
         currentStageIdx=0;
         stageTimeLeft=6;
+        miniGameActive=false;
         startTimer(6);
         showTooltip('Nasceu uma nova borboleta! 🥚');
       }
     }
 
-    // Utils cores
-    function hexToRgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.replace(/([0-9a-f])/gi,'$1$1');return[parseInt(hex.substr(0,2),16),parseInt(hex.substr(2,2),16),parseInt(hex.substr(4,2),16)];}
-    function rgbToHex(r,g,b){r=Math.round(r);g=Math.round(g);b=Math.round(b);r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);}
-    function randomColor(base,min=100,max=230){const[r,g,b]=hexToRgb(base);return rgbToHex(r+(Math.random()-0.5)*40,g+(Math.random()-0.5)*40,b+(Math.random()-0.5)*40);}
-
-    // Tooltip
-    function showTooltip(msg){
-      let t=document.getElementById('tooltip');
-      if(!t){t=document.createElement('div');t.id='tooltip';t.style.position='fixed';t.style.zIndex='2000';t.style.background='#222';t.style.color='#fff';t.style.borderRadius='6px';t.style.padding='6px 14px';t.style.opacity='0.95';document.body.appendChild(t);}
-      t.textContent=msg;t.style.display='block';t.style.left=(200+Math.random()*200)+'px';t.style.top=(80+Math.random()*80)+'px';
-      setTimeout(()=>t.style.display='none',1200);
+    // --- Miniaturas galeria ---
+    async function loadGalleryAndRender() {
+      const gallery = await loadGallery();
+      const div = document.getElementById('gallery');
+      div.innerHTML = gallery.map(b=>{
+        const mini = `<svg width="60" height="42" xmlns="http://www.w3.org/2000/svg">${makeMiniSVG(b.traits)}</svg>`;
+        return `<div class="mini${b.rare?' rare':''}">${mini}<span class="mini-label">${b.base_species||'Híbrida'}</span></div>`;
+      }).reverse().join(''); // mais recentes primeiro
+    }
+    function makeMiniSVG(traits) {
+      const w=60, h=42;
+      if(traits.pattern==='stripes') {
+        return `<rect x="0" y="0" width="${w/2}" height="${h}" fill="${traits.color1}"/><rect x="${w/2}" y="0" width="${w/2}" height="${h}" fill="${traits.color2}"/><line x1="${w/2}" y1="6" x2="${w/2}" y2="${h-6}" stroke="#222" stroke-width="2"/>`;
+      } else if(traits.pattern==='spots') {
+        let s=''; for(let i=0;i<5;i++) s+=`<circle cx="${14+Math.random()*32}" cy="${8+Math.random()*26}" r="2.5" fill="#222" fill-opacity="0.35"/>`;
+        return `<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/>${s}`;
+      } else {
+        return `<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/><rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color2}" fill-opacity="0.18"/>`;
+      }
     }
 
-    // Inicializar
-    window.addEventListener('keydown',e=>{if(e.key==='Enter'&&currentButterfly){advanceStage();}});
-    (async function(){ await render(); })();
+    // --- Tooltip ---
+    function showTooltip(msg){
+      let t=document.getElementById('tooltip');
+      if(!t){t=document.createElement('div');t.id='tooltip';t.className='tooltip';document.body.appendChild(t);}
+      t.textContent=msg;t.style.display='block';t.style.left=(220+Math.random()*180)+'px';t.style.top=(80+Math.random()*70)+'px';
+      setTimeout(()=>t.style.display='none',1100);
+    }
+
+    // --- Utils cores ---
+    function hexToRgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.replace(/([0-9a-f])/gi,'$1$1');return[parseInt(hex.substr(0,2),16),parseInt(hex.substr(2,2),16),parseInt(hex.substr(4,2),16)];}
+    function rgbToHex(r,g,b){r=Math.round(r);g=Math.round(g);b=Math.round(b);r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);}
+    function randomColor(base,min=100,max=220){const[r,g,b]=hexToRgb(base);return rgbToHex(r+(Math.random()-0.5)*44,g+(Math.random()-0.5)*44,b+(Math.random()-0.5)*44);}
+
+    // --- Inicialização ---
+    function setupKeyboardShortcuts() {
+      window.addEventListener('keydown',e=>{
+        if(e.key==='Enter'&&currentButterfly&&currentButterfly.stage!=='adulto') advanceStage();
+      });
+    }
+    (async function(){
+      setupTabs();
+      setupKeyboardShortcuts();
+      // Carrega ranking na aba Ranking
+      if(document.querySelector('.tab.active').getAttribute('data-tab')==='ranking') await loadRanking();
+      // Se já tiver borboleta (p.ex. refresh), carregar
+      render();
+    })();
 
   </script>
 </body>
