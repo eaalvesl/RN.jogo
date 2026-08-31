@@ -2,11 +2,14 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Borboletário — Jogo Completo</title>
+  <title>Borboletário — Compartilhe!</title>
   <style>
     body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg,#a8e6cf 0%,#dcedc8 100%); margin:0; min-height:100vh; }
-    .container { max-width:680px; margin:32px auto; background:#fff9; border-radius:18px; padding:28px 32px 22px 32px; box-shadow:0 4px 28px #004d3722; }
+    .container { max-width:740px; margin:32px auto; background:#fff9; border-radius:18px; padding:28px 32px 22px 32px; box-shadow:0 4px 28px #004d3722; }
     h1 { text-align:center; color:#2e7d32; margin-bottom:10px; }
+    .user-bar { display:flex; align-items:center; justify-content:right; margin-bottom:14px; gap:10px; }
+    .user-info { font-size:0.95em; color:#357a38; }
+    .logout-btn { background:#e57373; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; }
     .tabs { display:flex; gap:6px; margin-bottom:18px; justify-content:center; }
     .tab { padding:10px 22px; border-radius:8px; cursor:pointer; background:#e8f5e9; color:#357a38; font-weight:500; border:none; }
     .tab.active { background:#7cb342; color:white; box-shadow:0 2px 8px #689f3844; }
@@ -35,37 +38,77 @@
     .ranking-table th, .ranking-table td { padding:6px 10px; text-align:left; border-bottom:1px solid #e0e0e0; }
     .ranking-table th { color:#2e7d32; background:#e8f5e9; }
     .tooltip { position:fixed; z-index:2000; background:#222; color:#fff; border-radius:6px; padding:6px 16px; opacity:0.95; pointer-events:none; left:200px; top:90px; }
-    /* Mini‑jogo: folha arrastável */
-    .leaf-drag-area { display:flex; align-items:center; gap:20px; justify-content:center; margin:10px 0; }
-    .leaf { width:34px; height:34px; cursor:pointer; transition:transform 0.1s; user-select:none; }
-    .leaf.dragging { opacity:0.6; transform:scale(1.15); }
-    .leaf-target { width:52px; height:52px; border:3px dashed #8bc34a; border-radius:50%; background:#f9fff7; display:flex; align-items:center; justify-content:center; margin-left:12px; }
-    /* Mini‑jogo: predador */
-    .predator-game { text-align:center; }
-    .predator-img { width:70px; height:70px; margin:10px auto; cursor:pointer; transition:scale 0.08s; }
-    .predator-img:active { scale:0.92; }
-    .predator-meter { width:180px; height:18px; background:#ffe0b2; border-radius:9px; margin:8px auto 0 auto; border:1px solid #ffab00; position:relative; }
-    .predator-meter-fill { height:100%; background:linear-gradient(90deg,#ffab00,#ffd600); border-radius:9px; width:100%; transition:width 0.2s; }
-    .predator-meter-empty { position:absolute; left:0; top:0; width:100%; height:100%; background:rgba(255,0,0,0.10); border-radius:9px; }
+    /* Modal */
+    .modal-bg { position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(33,33,33,0.6); z-index:2000; display:flex; align-items:center; justify-content:center; }
+    .modal { background:white; padding:28px 36px; border-radius:14px; box-shadow:0 4px 32px #2223; min-width:280px; text-align:center; }
+    .modal input { width:100%; padding:8px; margin:6px 0 12px 0; border-radius:6px; border:1px solid #c8e6c9; font-size:1em; }
+    .modal .actions { margin-top:10px; }
+    /* Export PNG */
+    .export-btn { background:#ffd600; color:#222; border:none; padding:8px 18px; margin-left:10px; border-radius:7px; font-weight:bold; }
+    .export-btn:active { background:#ffb300; }
+    /* Share link */
+    .share-box { margin:10px 0; padding:8px 14px; background:#f3ffe6; border-radius:8px; display:flex; align-items:center; gap:8px; }
+    .share-input { flex:1; padding:6px; border-radius:6px; border:1px solid #c8e6c9; font-size:0.95em; }
+    .share-copied { color:#7cb342; font-size:0.95em; margin-left:6px; }
+    /* Conquistas */
+    .badge-list { display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; justify-content:center; }
+    .badge { background:#e8f5e9; border-radius:8px; padding:10px 18px; display:flex; align-items:center; gap:10px; box-shadow:0 1px 4px #8bc34a22; font-size:0.95em; }
+    .badge.locked { background:#eceff1; color:#aaa; }
+    .badge-icon { font-size:1.4em; }
+    /* Página compartilhada */
+    .share-page { text-align:center; padding:32px; background:#f5fff3; border-radius:16px; margin:24px auto; max-width:420px; box-shadow:0 2px 12px #004d3711; }
+    .share-owner { font-size:0.95em; color:#357a38; margin-bottom:6px; }
+    .share-id { font-size:0.8em; color:#888; margin-bottom:12px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Borboletário 🦋 — Jogo Completo</h1>
+  <!-- ===== LOGIN/REGISTER MODAL ===== -->
+  <div id="auth-modal-bg" class="modal-bg" style="display:none;">
+    <div class="modal">
+      <div id="auth-title" style="font-size:1.3em;font-weight:bold;color:#2e7d32;margin-bottom:10px;"></div>
+      <form id="auth-form" autocomplete="off">
+        <input id="auth-username" type="text" placeholder="Usuário" autocomplete="off" required>
+        <input id="auth-password" type="password" placeholder="Senha" autocomplete="new-password" required>
+        <div class="actions">
+          <button type="submit" id="auth-submit">Entrar</button>
+          <button type="button" id="auth-switch">Criar conta</button>
+        </div>
+        <div style="margin-top:8px;font-size:0.9em;color:#d32f2f;" id="auth-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== PÁGINA COMPARTILHADA (exibida se houver query param) ===== -->
+  <div id="share-page" class="share-page" style="display:none;">
+    <div style="font-weight:bold;font-size:1.2em;color:#2e7d32;margin-bottom:8px;">Borboleta compartilhada 🦋</div>
+    <div class="share-owner" id="share-owner"></div>
+    <div class="share-id" id="share-id"></div>
+    <div class="butterfly-img" id="share-img" style="margin:18px auto;"></div>
+    <div style="margin:10px 0;font-size:0.95em;color:#33691e;" id="share-traits"></div>
+    <button id="share-back" style="background:#7cb342;color:white;border:none;padding:8px 22px;border-radius:7px;">Voltar ao jogo</button>
+  </div>
+
+  <div class="container" id="main-container" style="display:block;">
+    <!-- User bar -->
+    <div class="user-bar">
+      <span class="user-info" id="user-info"></span>
+      <button class="logout-btn" id="logout-btn">Trocar conta</button>
+    </div>
+
+    <h1>Borboletário 🦋 — Compartilhe!</h1>
     <div class="tabs">
       <button class="tab active" data-tab="criar">Criar</button>
       <button class="tab" data-tab="galeria">Galeria</button>
+      <button class="tab" data-tab="conquistas">Conquistas</button>
       <button class="tab" data-tab="ranking">Ranking</button>
     </div>
 
     <!-- ===== TAB CRIAR ===== -->
     <div id="tab-criar" class="section active">
-      <div class="status" id="status">Crie sua borboleta personalizada.</div>
+      <div class="status" id="status">Carregando...</div>
       <div class="stage" id="stage"></div>
       <div class="butterfly-img" id="img"></div>
       <div class="actions" id="actions"></div>
-
-      <!-- Editor de traits -->
       <div class="trait-editor" id="trait-editor" style="display:none;">
         <label>Cor 1:</label>
         <div class="color-picker">
@@ -88,12 +131,23 @@
           <option value="grande">Grande</option>
         </select>
       </div>
+      <div style="margin-top:10px;text-align:center;">
+        <button class="export-btn" id="export-btn" disabled title="Exportar PNG">Exportar PNG 🖼️</button>
+        <button class="share-btn" id="share-btn" disabled style="background:#ffd600;color:#222;border:none;padding:8px 18px;margin-left:8px;border-radius:7px;font-weight:bold;">Compartilhar 🔗</button>
+      </div>
     </div>
 
     <!-- ===== TAB GALERIA ===== -->
     <div id="tab-galeria" class="section">
       <div class="gallery-title" style="font-weight:bold;color:#357a38;margin-bottom:8px;">Suas borboletas adultas</div>
       <div class="miniatures" id="gallery"></div>
+    </div>
+
+    <!-- ===== TAB CONQUISTAS ===== -->
+    <div id="tab-conquistas" class="section">
+      <div style="font-weight:bold;color:#357a38;margin-bottom:8px;">Suas conquistas</div>
+      <div class="badge-list" id="badge-list"></div>
+      <div style="margin-top:14px;color:#888;font-size:0.9em;">Desbloqueie badges criando, evoluindo e acasalando borboletas!</div>
     </div>
 
     <!-- ===== TAB RANKING ===== -->
@@ -116,9 +170,12 @@
   <script>
     // Config
     const API = 'http://localhost:5000/api';
-    const USER = 'demo';
+    let USER_ID = null;
+    let USERNAME = '';
+    const TOKEN_KEY = 'borbo_user_id';
+    const USERNAME_KEY = 'borbo_username';
 
-    // Estado local
+    // Estado do jogo
     let currentButterfly = null;
     let currentStageIdx = 0;
     let stageTimeLeft = 0;
@@ -131,13 +188,160 @@
       {id:'nocturna', name:'Nocturna', color1:'#7e57c2', color2:'#b39ddb', pattern:'plain', size:'médio'}
     ];
 
-    // SVG gerador (com animação de asas na fase adulta)
+    // --- Verifica se estamos na página compartilhada -----
+    function isSharePage() {
+      const params = new URLSearchParams(window.location.search);
+      return params.has('share') || params.has('butterfly_id');
+    }
+    function getShareIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('share') || params.get('butterfly_id');
+    }
+
+    // --- Autenticação (mesma do anterior) ---
+    function showAuthModal(mode='login') {
+      document.getElementById('auth-modal-bg').style.display='flex';
+      document.getElementById('auth-title').textContent = mode==='login'?'Entrar':'Registrar';
+      document.getElementById('auth-username').value='';
+      document.getElementById('auth-password').value='';
+      document.getElementById('auth-error').textContent='';
+      document.getElementById('auth-submit').textContent = mode==='login'?'Entrar':'Registrar';
+      document.getElementById('auth-switch').textContent = mode==='login'?'Criar conta':'Já tenho conta';
+      window._auth_mode = mode;
+    }
+    function hideAuthModal() { document.getElementById('auth-modal-bg').style.display='none'; }
+    function saveUserSession(user_id, username) {
+      USER_ID = user_id; USERNAME = username;
+      localStorage.setItem(TOKEN_KEY, user_id);
+      localStorage.setItem(USERNAME_KEY, username);
+      updateUserInfo();
+    }
+    function loadUserSession() {
+      USER_ID = localStorage.getItem(TOKEN_KEY);
+      USERNAME = localStorage.getItem(USERNAME_KEY) || '';
+      updateUserInfo();
+    }
+    function updateUserInfo() {
+      if(!USER_ID) {
+        document.getElementById('user-info').innerHTML = `<span style="color:#d32f2f;">Não autenticado</span>`;
+        document.getElementById('logout-btn').style.display='none';
+      } else {
+        document.getElementById('user-info').innerHTML = `<span style="color:#2e7d32;">@${USERNAME}</span>`;
+        document.getElementById('logout-btn').style.display='inline-block';
+      }
+    }
+    async function tryLoginOrRegister(mode) {
+      const username = document.getElementById('auth-username').value.trim();
+      const password = document.getElementById('auth-password').value;
+      if(!username||!password) { document.getElementById('auth-error').textContent='Preencha todos os campos.'; return; }
+      const endpoint = mode==='login'?'/api/login':'/api/register';
+      const r = await fetch(API+endpoint, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password})});
+      if(r.ok) {
+        const data = await r.json();
+        saveUserSession(data.user_id, data.username);
+        hideAuthModal();
+        await render();
+      } else {
+        const err = await r.json().catch(()=>({error:'Erro de rede'}));
+        document.getElementById('auth-error').textContent = err.error || 'Erro';
+      }
+    }
+
+    // --- Inicialização (decide se mostra share page ou main) ---
+    function setupApp() {
+      if(isSharePage()) {
+        showSharePage();
+      } else {
+        loadUserSession();
+        if(!USER_ID) showAuthModal('login');
+        setupMainApp();
+      }
+    }
+
+    // --- PÁGINA COMPARTILHADA (pública) ---
+    async function showSharePage() {
+      document.getElementById('main-container').style.display='none';
+      document.getElementById('share-page').style.display='block';
+      const butterfly_id = getShareIdFromUrl();
+      if(!butterfly_id) { document.getElementById('share-owner').textContent='Borboleta não encontrada.'; return; }
+      // Carrega via API pública
+      const r = await fetch(API+'/share/'+butterfly_id);
+      if(!r.ok) {
+        document.getElementById('share-owner').textContent='Borboleta não encontrada.';
+        document.getElementById('share-img').innerHTML='';
+        return;
+      }
+      const b = await r.json();
+      document.getElementById('share-owner').innerHTML = `Criada por <b>@${b.username}</b>`;
+      document.getElementById('share-id').textContent = `ID: ${butterfly_id}`;
+      document.getElementById('share-img').innerHTML = makeSVG(b.traits, b.stage, false);
+      document.getElementById('share-img').className = 'butterfly-img';
+      // Traits display
+      const traits = b.traits;
+      document.getElementById('share-traits').innerHTML =
+        `<b>Espécie:</b> ${b.base_species||'Híbrida'} &bull; <b>Geração:</b> ${b.generation||1} &bull; <b>Cor:</b> ${traits.color1}/${traits.color2}`;
+      // Botão voltar
+      document.getElementById('share-back').onclick = ()=>{
+        document.getElementById('share-page').style.display='none';
+        document.getElementById('main-container').style.display='block';
+        // remove share da URL para não recarregar
+        window.history.replaceState(null, '', window.location.pathname);
+        setupMainApp();
+      };
+    }
+
+    // --- MAIN APP (tabs, galeria, ranking, conquistas) ---
+    function setupMainApp() {
+      setupTabs();
+      setupExportButton();
+      setupShareButton();
+      setupKeyboardShortcuts();
+      // Carrega ranking se necessário
+      if(document.querySelector('.tab.active').getAttribute('data-tab')==='ranking') loadRanking();
+      if(document.querySelector('.tab.active').getAttribute('data-tab')==='conquistas') loadAchievements();
+      if(document.querySelector('.tab.active').getAttribute('data-tab')==='galeria') loadGalleryAndRender();
+      render();
+    }
+
+    // --- Tabs (main) ---
+    function setupTabs() {
+      document.querySelectorAll('.tab').forEach(btn=>{
+        btn.onclick=()=>{
+          if(!USER_ID) { showAuthModal('login'); return; }
+          document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
+          const tab = btn.getAttribute('data-tab');
+          document.getElementById('tab-'+tab).classList.add('active');
+          if(tab==='galeria') loadGalleryAndRender();
+          if(tab==='ranking') loadRanking();
+          if(tab==='conquistas') loadAchievements();
+        };
+      });
+    }
+
+    // --- API helpers (com X-User-Id) ---
+    async function apiGet(path) {
+      if(!USER_ID) return null;
+      const r = await fetch(API+path, {headers:{'X-User-Id':USER_ID}});
+      return r.ok ? await r.json() : [];
+    }
+    async function apiPost(path, data) {
+      if(!USER_ID) return null;
+      const r = await fetch(API+path, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','X-User-Id':USER_ID},
+        body:JSON.stringify(data)
+      });
+      return r.ok ? await r.json() : null;
+    }
+
+    // --- SVG gerador ---
     function makeSVG(traits, stage, isFlying=false) {
       const w=200, h=140;
       if(stage!=='adulto') {
         return `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="${w}" height="${h}" fill="#e0f7fa"/><text x="${w/2}" y="${h/2}" font-size="30" fill="#00695c" text-anchor="middle" dominant-baseline="middle">${stage}</text></svg>`;
       }
-      // Asas com padrão
       let wings='';
       if(traits.pattern==='stripes') {
         wings=`<rect x="0" y="0" width="${w/2}" height="${h}" fill="${traits.color1}"/><rect x="${w/2}" y="0" width="${w/2}" height="${h}" fill="${traits.color2}"/><line x1="100" y1="12" x2="100" y2="${h-12}" stroke="#222" stroke-width="3"/>`;
@@ -147,7 +351,6 @@
       } else {
         wings=`<rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color1}"/><rect x="0" y="0" width="${w}" height="${h}" fill="${traits.color2}" fill-opacity="0.12"/>`;
       }
-      // Corpo e antenas
       const body=`
         <ellipse cx="${w/2}" cy="${h/2}" rx="12" ry="20" fill="#333" />
         <ellipse cx="${w/2}" cy="${h/2}" rx="7" ry="11" fill="${traits.color2}" />
@@ -155,105 +358,36 @@
         <line x1="${w/2-4}" y1="10" x2="${w/2-14}" y2="2" stroke="#444" stroke-width="1.6"/>
         <line x1="${w/2+4}" y1="10" x2="${w/2+14}" y2="2" stroke="#444" stroke-width="1.6"/>
       `;
-      // Animação de asas batendo (CSS keyframes já no .butterfly-img.flying)
       return `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">${wings}${body}</svg>`;
     }
 
-    // --- Tabs ---
-    function setupTabs() {
-      document.querySelectorAll('.tab').forEach(btn=>{
-        btn.onclick=()=>{
-          document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-          document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
-          const tab = btn.getAttribute('data-tab');
-          document.getElementById('tab-'+tab).classList.add('active');
-          if(tab==='galeria') loadGalleryAndRender();
-          if(tab==='ranking') loadRanking();
-        };
-      });
-    }
-
-    // --- Timer de fase ---
-    function startTimer(seconds) {
-      stopTimer();
-      stageTimeLeft = seconds;
-      function tick() {
-        stageTimeLeft--;
-        render();
-        if(stageTimeLeft<=0) { stopTimer(); advanceStage(); }
-        else { stageTimer = setTimeout(tick, 1000); }
-      }
-      stageTimer = setTimeout(tick, 1000);
-    }
-    function stopTimer() { if(stageTimer) clearTimeout(stageTimer); stageTimer=null; }
-
-    // --- API helpers ---
-    async function loadGallery() {
-      const r = await fetch(`${API}/butterflies?user_id=${USER}`);
-      return r.ok ? await r.json() : [];
-    }
-    async function createButterfly(data) {
-      const r = await fetch(`${API}/butterflies`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
-      return r.ok ? await r.json() : null;
-    }
-    async function advanceButterfly(id) {
-      const r = await fetch(`${API}/butterflies/${id}/advance`, {method:'POST'});
-      return r.ok ? await r.json() : null;
-    }
-    async function updateButterflyTraits(id, traits) {
-      const r = await fetch(`${API}/butterflies/${id}/traits`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({traits})});
-      return r.ok ? await r.json() : null;
-    }
-    async function loadRanking() {
-      const r = await fetch(`${API}/ranking`);
-      const tbody = document.getElementById('ranking-body');
-      if(r.ok) {
-        const data = await r.json();
-        if(data.length===0) {
-          tbody.innerHTML='<tr><td colspan="3" style="text-align:center;color:#888;">Nenhuma borboleta registrada.</td></tr>';
-          return;
-        }
-        tbody.innerHTML = data.slice(0,15).map((item,i)=>`
-          <tr>
-            <td>${i+1}</td>
-            <td>
-              <span style="font-size:0.95em;color:#357a38;font-weight:500;">${item.name}</span>
-            </td>
-            <td style="color:#ffab00;font-weight:bold;">${item.count}</td>
-          </tr>
-        `).join('');
-      } else {
-        tbody.innerHTML='<tr><td colspan="3" style="text-align:center;color:#d32f2f;">Erro ao carregar ranking.</td></tr>';
-      }
-    }
-
-    // --- Renderização principal ---
+    // --- Renderização principal (main) ---
     async function render() {
-      // Atualiza imagem e ações
+      if(!USER_ID) return;
       const imgDiv = document.getElementById('img');
       if(currentButterfly) {
         const idx = STAGES.indexOf(currentButterfly.stage);
         currentStageIdx = idx;
         document.getElementById('stage').textContent = currentButterfly.stage;
-        // Animação de voo só na fase adulta
         imgDiv.innerHTML = makeSVG(currentButterfly.traits, currentButterfly.stage, currentButterfly.stage==='adulto');
         imgDiv.className = 'butterfly-img' + (currentButterfly.stage==='adulto'?' flying':'');
-        // Status
         let status = '';
         if(currentButterfly.stage==='ovo') status=`Ovo: aguarde ${stageTimeLeft}s.`;
         else if(currentButterfly.stage==='larva') status=`Lagarta: alimente para crescer (${stageTimeLeft}s).`;
         else if(currentButterfly.stage==='casulo') status=`Casulo: proteja de predadores (${stageTimeLeft}s).`;
         else if(currentButterfly.stage==='adulto') status=`Adulto! 🦋 <br><b>Espécie:</b> ${currentButterfly.base_species||'Híbrida'} <span style="font-size:0.9em;color:#8bc34a;">(Geração ${currentButterfly.generation||1})</span>`;
         document.getElementById('status').innerHTML = status;
-        // Ações
         renderActions();
+        document.getElementById('export-btn').disabled = false;
+        document.getElementById('share-btn').disabled = false;
       } else {
         document.getElementById('stage').textContent = '';
         imgDiv.innerHTML = '';
         imgDiv.className = 'butterfly-img';
         document.getElementById('status').innerHTML = ' personalize e crie sua borboleta:';
         renderActions();
+        document.getElementById('export-btn').disabled = true;
+        document.getElementById('share-btn').disabled = true;
       }
     }
 
@@ -262,21 +396,14 @@
       const actions = document.getElementById('actions');
       actions.innerHTML = '';
       if(!currentButterfly) {
-        // Mostrar editor de traits
         document.getElementById('trait-editor').style.display='flex';
-        // Botão criar
         const createBtn = document.createElement('button');
         createBtn.textContent = 'Criar borboleta 🦋';
         createBtn.onclick = async ()=>{
           const traits = getTraitsFromEditor();
-          // Validação mínima
-          if(!traits.color1 || !traits.color2) { showTooltip('Escolha as duas cores!'); return; }
           const id = 'b-'+Date.now()+'-'+Math.floor(Math.random()*1e5);
-          const data = {
-            id, user_id:USER, base_species:traits.base_species, stage:'ovo',
-            generation:1, traits, rare:0
-          };
-          const res = await createButterfly(data);
+          const data = {id, user_id:USER_ID, base_species:traits.base_species, stage:'ovo', generation:1, traits, rare:0};
+          const res = await apiPost('/butterflies', data);
           if(res) {
             currentButterfly = {...data, parents:null};
             currentStageIdx=0;
@@ -289,7 +416,6 @@
       } else {
         document.getElementById('trait-editor').style.display='none';
         const stage = currentButterfly.stage;
-        // Mini‑jogos por fase
         if(stage==='ovo') {
           const btn=document.createElement('button');
           btn.textContent='Aquecer';
@@ -297,7 +423,6 @@
           btn.disabled=stageTimeLeft>2;
           actions.appendChild(btn);
         } else if(stage==='larva') {
-          // Mini‑jogo arrastar folha
           if(!miniGameActive) {
             miniGameActive=true;
             const area = document.createElement('div');
@@ -308,21 +433,11 @@
               <div class="leaf-target" id="leaf-target"></div>
             `;
             actions.appendChild(area);
-            // Lógica de arrastar (mousedown+mousemove)
             let leaf = area.querySelector('.leaf');
-            let isDragging=false, startX=0, startY=0, offsetX=0, offsetY=0;
+            let isDragging=false;
             leaf.onmousedown = (e)=>{
               isDragging=true;
-              startX=e.clientX; startY=e.clientY;
-              const rect=leaf.getBoundingClientRect();
-              offsetX=rect.left; offsetY=rect.top;
               leaf.classList.add('leaf.dragging');
-            };
-            document.onmousemove=(e)=>{
-              if(isDragging) {
-                // Não movemos o elemento de verdade (para não sair do DOM);
-                // apenas verificamos se o mouse está sobre o alvo
-              }
             };
             document.onmouseup=(e)=>{
               if(isDragging) {
@@ -335,13 +450,11 @@
                   showTooltip('Lagarta alimentada!');
                   stageTimeLeft=Math.max(1, stageTimeLeft-3);
                   render();
-                  // reset folha (simulado)
                 }
               }
             };
           }
         } else if(stage==='casulo') {
-          // Mini‑jogo clicar para espantar predador
           if(!miniGameActive) {
             miniGameActive=true;
             const area = document.createElement('div');
@@ -354,49 +467,33 @@
             actions.appendChild(area);
             let meter = area.querySelector('#predator-meter');
             let power = 100;
-            let clicks=0;
-            function decrease() {
+            let interval = setInterval(()=>{
               power=Math.max(0,power-4.5);
               meter.style.width=power+'%';
               if(power<=0) {
-                // Espantou!
-                showTooltip('Predador espantado!');
-                stageTimeLeft=Math.max(1, stageTimeLeft-3);
+                clearInterval(interval);
+                showTooltip('Predador atacou!');
+                stageTimeLeft=Math.max(5, stageTimeLeft+3);
                 render();
-                miniGameActive=false;
-                area.remove();
+                setTimeout(()=>{ miniGameActive=false; area.remove(); },800);
               }
-            }
-            let interval = setInterval(decrease, 180);
+            }, 180);
             const img = area.querySelector('.predator-img');
             img.onclick=()=>{
-              clicks++;
               power=Math.min(100,power+8);
               meter.style.width=power+'%';
-              if(power>=100) {
-                // já cheio, nada
-              }
-              // efeito visual
               img.style.scale='0.94';
               setTimeout(()=>img.style.scale='1',60);
-              // Se chegar a 100, considera protegido
               if(power>=98) {
                 clearInterval(interval);
-                showTooltip('Protegido!');
+                showTooltip('Predador espantado!');
                 stageTimeLeft=Math.max(1, stageTimeLeft-2);
-                setTimeout(()=>{
-                  render();
-                  miniGameActive=false;
-                  area.remove();
-                },600);
+                setTimeout(()=>{ render(); miniGameActive=false; area.remove(); },600);
               }
             };
-            // Remove se fase mudar
-            setTimeout(()=>{ if(!miniGameActive) { clearInterval(interval); area.remove(); } }, 15000);
           }
         } else if(stage==='adulto') {
-          // Acasalar + nova
-          const gallery = await loadGallery();
+          const gallery = await apiGet('/butterflies');
           const partners = gallery.filter(b=>b.id!==currentButterfly.id);
           const canMate = partners.length>0;
           const mateBtn=document.createElement('button');
@@ -418,17 +515,13 @@
       if(!currentButterfly) return;
       stopTimer();
       if(currentButterfly.stage==='adulto') return;
-      // Se estiver em mini‑jogo, encerra
       miniGameActive=false;
-      // Avança na API
-      const updated = await advanceButterfly(currentButterfly.id);
+      const updated = await apiPost(`/butterflies/${currentButterfly.id}/advance`, {});
       if(updated) {
         currentButterfly.stage = updated.stage;
         currentStageIdx = STAGES.indexOf(updated.stage);
-        // Tempo por fase
         const times = {ovo:6, larva:8, casulo:10, adulto:20};
         stageTimeLeft = times[currentButterfly.stage] || 6;
-        miniGameActive=false; // reset mini‑jogo
         startTimer(stageTimeLeft);
         render();
       }
@@ -440,14 +533,13 @@
       const color2 = document.getElementById('color2-picker').value;
       const pattern = document.getElementById('pattern-select').value;
       const size = document.getElementById('size-select').value;
-      // base_species: tenta adivinhar pela cor/padrão
       let base = SPECIES[0].id;
       if(color1.startsWith('#4f')||color2.startsWith('#a5')) base='azulada';
       if(color1.startsWith('#7e')||color2.startsWith('#b3')) base='nocturna';
       return {base_species:base, color1, color2, pattern, size};
     }
 
-    // --- Acasalamento ---
+    // --- Acasalamento (com conquista) ---
     function openMateDialog(partners) {
       const dialog = document.createElement('div');
       dialog.style.position='fixed';
@@ -476,10 +568,9 @@
       },10);
     }
     async function mateWith(partnerId) {
-      const gallery = await loadGallery();
+      const gallery = await apiGet('/butterflies');
       const partner = gallery.find(b=>b.id===partnerId);
       if(!partner) return;
-      // Herança com mistura e mutação
       function mix(a,b) {
         if(typeof a==='string' && a.startsWith('#')) return blendColors(a,b,0.5+(Math.random()-0.5)*0.28);
         return Math.random()<0.5?a:b;
@@ -494,7 +585,6 @@
         pattern: mix(currentButterfly.traits.pattern, partner.traits.pattern),
         size: mix(currentButterfly.traits.size, partner.traits.size)
       };
-      // Mutação rara
       if(Math.random()<0.10) {
         childTraits.pattern=['stripes','spots','plain'][Math.floor(Math.random()*3)];
         childTraits.color1=randomColor('#ff0',60,220);
@@ -502,12 +592,14 @@
       }
       const id='b-filho-'+Date.now()+'-'+Math.floor(Math.random()*1e6);
       const data={
-        id, user_id:USER, parents:[currentButterfly.id, partnerId], base_species:'híbrida',
+        id, user_id:USER_ID, parents:[currentButterfly.id, partnerId], base_species:'híbrida',
         stage:'ovo', generation:Math.max(currentButterfly.generation||1, partner.generation||1)+1,
         traits:childTraits, rare:(Math.random()<0.08?1:0)
       };
-      const res=await createButterfly(data);
+      const res=await apiPost('/butterflies', data);
       if(res) {
+        // Conquista: acasalou
+        unlockAchievement('acasalou','Reprodução');
         stopTimer();
         currentButterfly={...data, parents:[currentButterfly.id, partnerId]};
         currentStageIdx=0;
@@ -520,12 +612,12 @@
 
     // --- Miniaturas galeria ---
     async function loadGalleryAndRender() {
-      const gallery = await loadGallery();
+      const gallery = await apiGet('/butterflies');
       const div = document.getElementById('gallery');
       div.innerHTML = gallery.map(b=>{
         const mini = `<svg width="60" height="42" xmlns="http://www.w3.org/2000/svg">${makeMiniSVG(b.traits)}</svg>`;
         return `<div class="mini${b.rare?' rare':''}">${mini}<span class="mini-label">${b.base_species||'Híbrida'}</span></div>`;
-      }).reverse().join(''); // mais recentes primeiro
+      }).reverse().join('');
     }
     function makeMiniSVG(traits) {
       const w=60, h=42;
@@ -539,34 +631,184 @@
       }
     }
 
-    // --- Tooltip ---
+    // --- Ranking ---
+    async function loadRanking() {
+      const tbody = document.getElementById('ranking-body');
+      try {
+        const r = await fetch(API+'/ranking');
+        const data = await r.json();
+        if(!r.ok||!data||data.length===0) {
+          tbody.innerHTML='<tr><td colspan="3" style="text-align:center;color:#888;">Nenhuma borboleta registrada.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = data.slice(0,15).map((item,i)=>`
+          <tr>
+            <td>${i+1}</td>
+            <td><span style="font-size:0.95em;color:#357a38;font-weight:500;">${item.name}</span></td>
+            <td style="color:#ffab00;font-weight:bold;">${item.count}</td>
+          </tr>
+        `).join('');
+      } catch {
+        tbody.innerHTML='<tr><td colspan="3" style="text-align:center;color:#d32f2f;">Erro ao carregar ranking.</td></tr>';
+      }
+    }
+
+    // --- Timer ---
+    function startTimer(seconds) {
+      stopTimer();
+      stageTimeLeft = seconds;
+      function tick() {
+        stageTimeLeft--;
+        render();
+        if(stageTimeLeft<=0) { stopTimer(); advanceStage(); }
+        else { stageTimer = setTimeout(tick, 1000); }
+      }
+      stageTimer = setTimeout(tick, 1000);
+    }
+    function stopTimer() { if(stageTimer) clearTimeout(stageTimer); stageTimer=null; }
+
+    // --- Exportar PNG ---
+    async function exportPNG() {
+      if(!currentButterfly) return;
+      const svg = makeSVG(currentButterfly.traits, currentButterfly.stage, false);
+      const blob = new Blob([svg], {type:'image/svg+xml'});
+      const url = URL.createObjectURL(blob);
+      const img = new window.Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 400; canvas.height = 280;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, 400, 280);
+        canvas.toBlob(function(blob2) {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob2);
+          const name = `borboleta-${currentButterfly.base_species||'híbrida'}-${currentButterfly.id.slice(-6)}.png`;
+          a.download = name;
+          a.click();
+          URL.revokeObjectURL(a.href);
+          showTooltip('Imagem exportada!');
+        }, 'image/png');
+      };
+      img.src = url;
+    }
+    function setupExportButton() {
+      document.getElementById('export-btn').onclick = exportPNG;
+    }
+
+    // --- ===== NOVO: COMPARTILHAR ===== ---
+    async function setupShareButton() {
+      const btn = document.getElementById('share-btn');
+      btn.onclick = async ()=>{
+        if(!currentButterfly) return;
+        // Pede link ao backend (valida ownership)
+        const r = await fetch(API+`/butterflies/${currentButterfly.id}/share`, {
+          headers:{'X-User-Id':USER_ID}
+        });
+        if(!r.ok) { showTooltip('Erro ao gerar link.'); return; }
+        const data = await r.json();
+        // Monta URL (assume que o jogo está em http://localhost:5000 ou no domínio do servidor)
+        const shareUrl = `${window.location.origin}${window.location.pathname}?share=${data.butterfly_id}`;
+        // Exibe caixa de compartilhamento
+        showShareBox(shareUrl);
+      };
+    }
+    function showShareBox(url) {
+      let box = document.querySelector('.share-box');
+      if(box) { box.remove(); }
+      box = document.createElement('div');
+      box.className='share-box';
+      box.innerHTML=`
+        <input class="share-input" type="text" readonly value="${url}">
+        <button class="share-copy-btn" style="background:#7cb342;color:white;border:none;padding:6px 14px;border-radius:6px;">Copiar</button>
+        <span class="share-copied" style="display:none;">Copiado!</span>
+      `;
+      const actions = document.getElementById('actions');
+      actions.appendChild(box);
+      // Copy logic
+      box.querySelector('.share-copy-btn').onclick=()=>{
+        navigator.clipboard.writeText(url).then(()=>{
+          box.querySelector('.share-copied').style.display='inline';
+          setTimeout(()=>box.querySelector('.share-copied').style.display='none',1200);
+        };
+      };
+    }
+
+    // --- ===== NOVO: CONQUISTAS ===== ---
+    async function loadAchievements() {
+      const list = document.getElementById('badge-list');
+      list.innerHTML = '<div style="color:#888;">Carregando...</div>';
+      const r = await fetch(API+'/achievements', {
+        headers:{'X-User-Id':USER_ID}
+      });
+      if(!r.ok) { list.innerHTML='<div style="color:#d32f2f;">Erro ao carregar conquistas.</div>'; return; }
+      const achievements = await r.json();
+      // Meta (mesma do backend)
+      const meta = {
+        'primeira_criacao': {name:'Primeira Criação', desc:'Criou sua primeira borboleta'},
+        'adulto': {name:'Adulto!', desc:'Levou uma borboleta até a fase adulta'},
+        'mutante': {name:'Mutante Rara', desc:'Criou uma borboleta rara por mutação'},
+        'acasalou': {name:'Reprodução', desc:'Fez duas borboletas acasalarem'},
+        'dez_adultas': {name:'Coleção', desc:'Chegou a 10 borboletas adultas'},
+        'raridade_top10': {name:'Top 10 Rara', desc:'Sua espécie está entre as 10 mais raras do mundo'}
+      };
+      // Conta quantas adultas o usuário tem (para badge de coleção)
+      const gallery = await apiGet('/butterflies');
+      const adultas = gallery.length;
+      // Badge unlock conditions (frontend-side para coleção)
+      if(adultas>=10) unlockAchievement('dez_adultas','Coleção');
+
+      list.innerHTML = Object.values(meta).map(a=>{
+        const unlocked = achievements.some(x=>x.key===a.key && x.unlocked);
+        return `
+          <div class="badge${unlocked?'':' locked'}">
+            <span class="badge-icon">${unlocked?'🏆':'🔒'}</span>
+            <div>
+              <b>${a.name}</b><br>
+              <span style="font-size:0.9em;color:${unlocked?'#357a38':'#aaa'}">${a.desc}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    async function unlockAchievement(key, name) {
+      // Chama backend (idempotente)
+      await fetch(API+'/achievements', {
+        method:'POST',
+        headers:{'X-User-Id':USER_ID,'Content-Type':'application/json'},
+        body:JSON.stringify({key,name})
+      });
+      // Atualiza UI se estiver na aba
+      if(document.getElementById('tab-conquistas')?.classList.contains('active')) loadAchievements();
+    }
+
+    // --- Autenticação, tabs, etc ---
+    function setupKeyboardShortcuts() {
+      window.addEventListener('keydown',e=>{
+        if(e.key==='Enter'&&currentButterfly&&currentButterfly.stage!=='adulto') advanceStage();
+      });
+    }
+    (function(){
+      setupApp();
+      document.getElementById('logout-btn').onclick = ()=>{
+        USER_ID = null; USERNAME='';
+        localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USERNAME_KEY);
+        updateUserInfo();
+        showAuthModal('login');
+        currentButterfly=null;
+        render();
+      };
+    })();
+
+    // --- Utils cores ---
+    function hexToRgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.replace(/([0-9a-f])/gi,'$1$1');return[parseInt(hex.substr(0,2),16),parseInt(hex.substr(2,2),16),parseInt(hex.substr(4,2),16)];}
+    function rgbToHex(r,g,b){r=Math.round(r);g=Math.round(g);b=Math.round(b);r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);}
+    function randomColor(base,min=100,max=220){const[r,g,b]=hexToRgb(base);return rgbToHex(r+(Math.random()-0.5)*44,g+(Math.random()-0.5)*44,b+(Math.random()-0.5)*44);}
     function showTooltip(msg){
       let t=document.getElementById('tooltip');
       if(!t){t=document.createElement('div');t.id='tooltip';t.className='tooltip';document.body.appendChild(t);}
       t.textContent=msg;t.style.display='block';t.style.left=(220+Math.random()*180)+'px';t.style.top=(80+Math.random()*70)+'px';
       setTimeout(()=>t.style.display='none',1100);
     }
-
-    // --- Utils cores ---
-    function hexToRgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.replace(/([0-9a-f])/gi,'$1$1');return[parseInt(hex.substr(0,2),16),parseInt(hex.substr(2,2),16),parseInt(hex.substr(4,2),16)];}
-    function rgbToHex(r,g,b){r=Math.round(r);g=Math.round(g);b=Math.round(b);r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);}
-    function randomColor(base,min=100,max=220){const[r,g,b]=hexToRgb(base);return rgbToHex(r+(Math.random()-0.5)*44,g+(Math.random()-0.5)*44,b+(Math.random()-0.5)*44);}
-
-    // --- Inicialização ---
-    function setupKeyboardShortcuts() {
-      window.addEventListener('keydown',e=>{
-        if(e.key==='Enter'&&currentButterfly&&currentButterfly.stage!=='adulto') advanceStage();
-      });
-    }
-    (async function(){
-      setupTabs();
-      setupKeyboardShortcuts();
-      // Carrega ranking na aba Ranking
-      if(document.querySelector('.tab.active').getAttribute('data-tab')==='ranking') await loadRanking();
-      // Se já tiver borboleta (p.ex. refresh), carregar
-      render();
-    })();
-
   </script>
 </body>
 </html>
