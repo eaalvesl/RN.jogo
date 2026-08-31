@@ -726,7 +726,7 @@
       actions.appendChild(box);
       // Copy logic
       box.querySelector('.share-copy-btn').onclick=()=>{
-        navigator.clipboard.writeText(url).then(()=>{
+        navigator.clipboard.writeText(url).then()=>{
           box.querySelector('.share-copied').style.display='inline';
           setTimeout(()=>box.querySelector('.share-copied').style.display='none',1200);
         };
