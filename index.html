@@ -10,13 +10,13 @@
       padding: 0;
       min-height: 100vh;
       background: linear-gradient(135deg, #f9f6ff 0%, #d7f0ea 100%);
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
     }
     #container {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 20px 10px;
+      padding: 12px 6px;
     }
     /* Top bar */
     #top-bar {
@@ -24,46 +24,45 @@
       justify-content: space-between;
       align-items: center;
       background: #fff;
-      border-radius: 16px;
-      padding: 16px 24px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 24px #6d83f218;
+      border-radius: 14px;
+      padding: 12px 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 16px #6d83f218;
     }
     .top-icons {
       display: flex;
-      gap: 20px;
+      gap: 16px;
       align-items: center;
     }
-    .icon-placeholder {
-      width: 36px;
-      height: 36px;
+    .icon-box {
+      width: 32px;
+      height: 32px;
       background: linear-gradient(135deg, #6d83f2 60%, #8ecae6 100%);
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: bold;
-      letter-spacing: 1px;
-      box-shadow: 0 2px 8px #43568a22;
+      box-shadow: 0 1px 4px #43568a22;
     }
     .level-badge {
       background: linear-gradient(90deg, #fbbf24 60%, #d97706 100%);
       color: #fff;
       font-weight: bold;
-      font-size: 1rem;
-      border-radius: 12px;
-      padding: 5px 16px;
-      margin-left: 12px;
+      font-size: 0.98rem;
+      border-radius: 10px;
+      padding: 4px 14px;
+      margin-left: 10px;
       letter-spacing: 1px;
     }
-    #title {
+    #game-title {
       position: absolute;
       left: 50%;
-      top: 22px;
+      top: 14px;
       transform: translateX(-50%);
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       font-weight: bold;
       background: linear-gradient(90deg, #6d83f2 60%, #8ecae6 100%);
       -webkit-background-clip: text;
@@ -72,40 +71,41 @@
       font-family: Georgia, serif;
       letter-spacing: 2px;
     }
-    /* Main content */
+    /* Content */
     #content {
       flex: 1;
       display: flex;
       align-items: center;
-      gap: 32px;
-      min-height: 380px;
+      gap: 24px;
+      min-height: 320px;
+      padding: 0 6px;
     }
     #achievements {
-      flex: 0 0 200px;
+      flex: 0 0 160px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
     }
     .medal {
       background: #fffefc;
-      border-radius: 10px;
-      border: 2px solid #e2e8f0;
-      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1.5px solid #e2e8f0;
+      padding: 10px 12px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 2px 10px #6d83f212;
+      gap: 8px;
+      box-shadow: 0 1px 6px #6d83f212;
     }
     .medal-icon {
-      width: 30px;
-      height: 30px;
+      width: 26px;
+      height: 26px;
       background: #fbbf24;
-      border-radius: 8px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: bold;
       border: 1px solid #d97706;
     }
@@ -116,12 +116,12 @@
       justify-content: center;
     }
     .gif-wrapper {
-      width: 200px;
-      height: 200px;
-      background: rgba(255,255,255,0.85);
+      width: 160px;
+      height: 160px;
+      background: rgba(255,255,255,0.9);
       border-radius: 50%;
-      box-shadow: 0 8px 36px #6d83f228;
-      border: 2.5px solid #e2e8f0;
+      box-shadow: 0 6px 28px #6d83f222;
+      border: 2px solid #e2e8f0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -132,24 +132,26 @@
       100% { transform: scale(1.03); }
     }
     .butterfly-gif {
-      width: 120px;
-      height: 120px;
-      filter: drop-shadow(0 4px 16px #a7c8e633);
-      animation: float 3s ease-in-out infinite alternate;
+      width: 100px;
+      height: 100px;
+      filter: drop-shadow(0 3px 12px #a7c8e633);
+      animation: float 2.5s ease-in-out infinite alternate;
+      border-radius: 50%;
+      background: #f3f4f6;
     }
     @keyframes float {
       0% { transform: translateY(0px) rotate(-2deg); }
-      100% { transform: translateY(-12px) rotate(2deg); }
+      100% { transform: translateY(-10px) rotate(2deg); }
     }
     #game-panel {
-      flex: 0 0 300px;
+      flex: 0 0 240px;
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 6px 30px #43568a18;
+      border-radius: 12px;
+      box-shadow: 0 4px 22px #43568a18;
       border: 2px solid #e2e8f0;
-      padding: 22px 16px;
-      min-width: 260px;
-      max-width: 340px;
+      padding: 16px 10px;
+      min-width: 200px;
+      max-width: 300px;
       display: flex;
       flex-direction: column;
       align-items: stretch;
@@ -158,79 +160,80 @@
       text-align: center;
       font-weight: bold;
       color: #43568a;
-      margin-bottom: 12px;
-      font-size: 1.1rem;
+      margin-bottom: 10px;
+      font-size: 1rem;
       letter-spacing: 0.5px;
     }
     #stages {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
     }
     .slot {
       width: 100%;
-      min-height: 64px;
+      min-height: 52px;
       background: #f7fafc;
-      border-radius: 10px;
+      border-radius: 8px;
       border: 2px dashed #a7c8e6;
       display: flex;
       align-items: center;
-      padding: 6px 10px;
-      transition: background 0.2s, border 0.2s;
+      padding: 4px 8px;
       position: relative;
+      transition: background 0.2s, border 0.2s;
     }
     .slot.accepting {
       background: #e6f0ff;
       border: 2.5px solid #6d83f2;
     }
     .card {
-      width: 52px;
-      height: 52px;
+      width: 44px;
+      height: 44px;
       background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 3px 12px #43568a18;
+      border-radius: 7px;
+      box-shadow: 0 2px 9px #43568a18;
       border: 2px solid #d7e0f0;
       cursor: grab;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 10px;
-      transition: transform 0.16s;
+      margin-right: 8px;
+      transition: transform 0.14s;
       user-select: none;
+      touch-action: none;
     }
     .card.dragging {
-      transform: scale(1.12) rotate(-4deg);
-      box-shadow: 0 8px 24px #6d83f233;
-      border: 3px solid #6d83f2;
+      transform: scale(1.1) rotate(-4deg);
+      box-shadow: 0 6px 18px #6d83f228;
+      border: 2.5px solid #6d83f2;
     }
     .number-badge {
       background: #6d83f2;
       color: #fff;
       font-weight: bold;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       border-radius: 50%;
-      width: 22px;
-      height: 22px;
+      width: 18px;
+      height: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 8px;
+      margin-right: 6px;
     }
     .btn {
       display: block;
       width: 100%;
-      margin-top: 16px;
+      margin-top: 12px;
       background: linear-gradient(90deg, #4ade80 40%, #16a34a 100%);
       color: #fff;
       border: none;
-      border-radius: 12px;
-      padding: 12px 0;
-      font-size: 1.05rem;
+      border-radius: 10px;
+      padding: 10px 0;
+      font-size: 1.02rem;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 4px 18px #4ade8022;
+      box-shadow: 0 3px 14px #4ade8022;
       border: 2px solid #16a34a;
-      transition: background 0.2s, transform 0.16s;
+      transition: background 0.18s, transform 0.14s;
     }
     .btn:hover:not(:disabled) {
       background: linear-gradient(90deg, #86efac 40%, #4ade80 100%);
@@ -247,49 +250,49 @@
     }
     #feedback {
       text-align: center;
-      margin-top: 10px;
-      font-size: 1.02rem;
+      margin-top: 8px;
+      font-size: 0.98rem;
       font-weight: 600;
-      min-height: 26px;
+      min-height: 22px;
       color: #43568a;
     }
     #feedback.correct {
       color: #2f855a;
       background: #e2f8ee;
-      border-radius: 6px;
-      padding: 4px 0;
+      border-radius: 5px;
+      padding: 2px 0;
     }
     #feedback.wrong {
       color: #c53030;
       background: #ffebee;
-      border-radius: 6px;
-      padding: 4px 0;
+      border-radius: 5px;
+      padding: 2px 0;
     }
-    @media (max-width: 900px) {
+    @media (max-width: 800px) {
       #content {
         flex-direction: column;
         align-items: center;
-        gap: 22px;
+        gap: 16px;
       }
       #achievements {
         flex-direction: row;
         flex-wrap: wrap;
         width: 100%;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
       }
       #game-panel {
-        width: 96vw;
-        min-width: 240px;
-        max-width: 420px;
+        width: 94vw;
+        min-width: 180px;
+        max-width: 360px;
       }
       .gif-wrapper {
-        width: 140px;
-        height: 140px;
+        width: 110px;
+        height: 110px;
       }
       .butterfly-gif {
-        width: 85px;
-        height: 85px;
+        width: 70px;
+        height: 70px;
       }
     }
   </style>
@@ -298,25 +301,370 @@
   <div id="container">
     <div id="top-bar">
       <div class="top-icons">
-        <div class="icon-placeholder" title="Inventário">🎒</div>
-        <div class="icon-placeholder" title="Flor/Mel">🌸</div>
+        <div class="icon-box" title="Inventário">🎒</div>
+        <div class="icon-box" title="Flor/Mel">🌸</div>
       </div>
       <div class="level-badge">Nível 1</div>
     </div>
-    <div id="title">Ciclo da Borboleta</div>
+    <div id="game-title">Ciclo da Borboleta</div>
     
     <div id="content">
       <div id="achievements">
         <div class="medal">
           <div class="medal-icon">🥇</div>
           <div>
-            <div style="font-weight:bold;font-size:0.98rem;">Primeiros Voos</div>
-            <div style="font-size:0.85rem;color:#718096;">Complete o ciclo</div>
+            <div style="font-weight:bold;font-size:0.95rem;">Primeiros Voos</div>
+            <div style="font-size:0.82rem;color:#718096;">Complete o ciclo</div>
           </div>
         </div>
       </div>
       
       <div id="center">
         <div class="gif-wrapper">
-          <!-- GIF público do GIPHY -->
-          <img class="butterfly-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd3F5Z2h5b2JkZmN5Z2Z5Z2Z5Z2Z5Z2Z5Z2Z5Z2Z5Z2Z5Z2Z5Z2Z5ZyZwPTd3NzY4NzQxJmV4ZD12MTIwJmV2ZW49U0VBUkNIX2dldF9naWZzX2J5X2lkJmNzPTUxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMxNjMx
+          <!-- GIF público confiável do GIPHY -->
+          <img class="butterfly-gif" src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" alt="Borboleta voando" loading="lazy">
+        </div>
+      </div>
+      
+      <div id="game-panel">
+        <div id="stages-title">Ordem correta:</div>
+        <div id="stages"></div>
+        <button class="btn" id="check-btn">✓ Verificar</button>
+        <div id="feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // SVGs minimalistas para cada estágio (desenhos em estilo cartoon)
+    const STAGE_SVGS = [
+      // OVO - verde claro
+      `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+         <ellipse cx="20" cy="24" rx="12" ry="8" fill="#f3f4f6" stroke="#cbd5e1" stroke-width="2"/>
+         <ellipse cx="21" cy="25" rx="7" ry="4" fill="#e2ffe6" stroke="none"/>
+       </svg>`,
+      // LARVA - amarelo
+      `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+         <ellipse cx="18" cy="25" rx="10" ry="7" fill="#fff7d6" stroke="#f59e0b" stroke-width="2"/>
+         <ellipse cx="26" cy="23" rx="8" ry="5" fill="#fff7d6" stroke="#f59e0b" stroke-width="2"/>
+         <ellipse cx="32" cy="21" rx="6" ry="4" fill="#fff7d6" stroke="#f59e0b" stroke-width="2"/>
+         <circle cx="15" cy="20" r="3" fill="#111" stroke="none"/>
+         <circle cx="18" cy="19" r="1.2" fill="#fff" stroke="none"/>
+       </svg>`,
+      // PUPA - dourado
+      `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+         <path d="M20 10 Q16 16 14 24 Q16 32 20 36 Q24 32 26 24 Q24 16 20 10" 
+                fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+         <ellipse cx="20" cy="23" rx="7" ry="4" fill="#fffbe6" stroke="#d97706" stroke-width="1"/>
+       </svg>`,
+      // BORBOLETA - azul
+      `<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+         <path d="M20 18 Q16 14 12 18 Q16 22 20 26 Q24 22 28 18 Q32 14 28 10 Q24 6 20 10 Q16 6 12 10" 
+                fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/>
+         <path d="M20 18 Q24 14 28 18 Q24 22 20 26 Q16 22 12 18 Q16 14 20 18"
+                fill="#e0e7ff" stroke="#2563eb" stroke-width="2"/>
+         <ellipse cx="20" cy="20" rx="3" ry="5" fill="#1e293b" stroke="none"/>
+         <ellipse cx="20" cy="20" rx="1.2" ry="2" fill="#fff" stroke="none"/>
+       </svg>`
+    ];
+
+    // Estado do jogo
+    const ORDER = [0, 1, 2, 3]; // ordem correta: ovo → larva → pupa → borboleta
+    let currentOrder = [0, 1, 2, 3];
+    let dragData = null;
+
+    // Elementos
+    const stagesDiv = document.getElementById('stages');
+    const checkBtn = document.getElementById('check-btn');
+    const feedback = document.getElementById('feedback');
+
+    // Embaralha o array (Fisher-Yates)
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // Renderiza os slots com as cartas embaralhadas
+    function renderStages() {
+      stagesDiv.innerHTML = '';
+      // Embaralha a ordem inicial
+      currentOrder = shuffle([0, 1, 2, 3]);
+      
+      currentOrder.forEach((stageIdx, slotIdx) => {
+        const slot = document.createElement('div');
+        slot.className = 'slot';
+        slot.setAttribute('data-slot', slotIdx);
+        slot.setAttribute('data-stage', stageIdx);
+        
+        // Número do slot (posição)
+        const badge = document.createElement('span');
+        badge.className = 'number-badge';
+        badge.textContent = slotIdx + 1;
+        slot.appendChild(badge);
+
+        // Carta (SVG)
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `Arraste o estágio ${slotIdx + 1}`);
+        card.innerHTML = STAGE_SVGS[stageIdx];
+        slot.appendChild(card);
+
+        // Eventos de drag
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+
+        // Eventos de toque para mobile
+        card.addEventListener('touchstart', handleTouchStart, {passive: false});
+        card.addEventListener('touchmove', handleTouchMove, {passive: false});
+        card.addEventListener('touchend', handleTouchEnd);
+
+        stagesDiv.appendChild(slot);
+      });
+
+      // Setup drop events nos slots
+      document.querySelectorAll('.slot').forEach(slot => {
+        slot.addEventListener('dragover', handleDragOver);
+        slot.addEventListener('drop', handleDrop);
+        slot.addEventListener('dragenter', handleDragEnter);
+        slot.addEventListener('dragleave', handleDragLeave);
+      });
+
+      feedback.textContent = '';
+      checkBtn.disabled = false;
+    }
+
+    // ===== DRAG & DROP =====
+    function handleDragStart(e) {
+      const card = e.target.closest('.card');
+      if (!card) return;
+      card.classList.add('dragging');
+      dragData = {
+        card,
+        fromSlot: card.parentElement.getAttribute('data-slot')
+      };
+      // Setar transferência visual (nativo do navegador cuida)
+      e.dataTransfer.effectAllowed = 'move';
+      // Para Firefox precisar de set data
+      try { e.dataTransfer.setData('text/plain', dragData.fromSlot); } catch(e) {}
+    }
+
+    function handleDragEnd(e) {
+      const card = e.target.closest('.card');
+      card?.classList.remove('dragging');
+      dragData = null;
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      const slot = e.target.closest('.slot');
+      if (!slot || slot.querySelector('.card')) return;
+      slot.classList.add('accepting');
+    }
+
+    function handleDragEnter(e) {
+      e.preventDefault();
+      handleDragOver(e);
+    }
+
+    function handleDragLeave(e) {
+      const slot = e.target.closest('.slot');
+      slot?.classList.remove('accepting');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const toSlot = e.target.closest('.slot');
+      if (!toSlot || toSlot.querySelector('.card')) return;
+      toSlot.classList.remove('accepting');
+
+      if (!dragData) return;
+      const fromSlot = parseInt(dragData.fromSlot);
+      const toSlotIdx = parseInt(toSlot.getAttribute('data-slot'));
+
+      // Se arrastou para o mesmo slot, nada muda
+      if (fromSlot === toSlotIdx) return;
+
+      // Reordenar o array currentOrder
+      const item = currentOrder[fromSlot];
+      currentOrder.splice(fromSlot, 1); // remove do antigo
+      currentOrder.splice(toSlotIdx, 0, item); // insere no novo
+
+      renderCurrentOrder();
+    }
+
+    // ===== TOQUE (MOBILE) =====
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let touchCard = null;
+    let touchSlot = null;
+    let isDragging = false;
+
+    function handleTouchStart(e) {
+      if (e.touches.length !== 1) return;
+      touchCard = e.target.closest('.card');
+      if (!touchCard) return;
+      touchSlot = touchCard.parentElement;
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+      isDragging = false;
+      // Armazenar índice inicial
+      dragData = { fromSlot: parseInt(touchSlot.getAttribute('data-slot')) };
+      e.preventDefault();
+    }
+
+    function handleTouchMove(e) {
+      if (!touchCard || e.touches.length !== 1) return;
+      const deltaY = e.touches[0].clientY - touchStartY;
+      const deltaX = e.touches[0].clientX - touchStartX;
+      // Se mover mais que 15px, inicia drag visual
+      if (Math.abs(deltaY) > 15 || Math.abs(deltaX) > 15) {
+        isDragging = true;
+        touchCard.style.position = 'absolute';
+        touchCard.style.zIndex = '100';
+        touchCard.style.left = `${touchStartX}px`;
+        touchCard.style.top = `${touchStartY}px`;
+        touchCard.style.opacity = '0.7';
+        // Destacar slots
+        document.querySelectorAll('.slot').forEach(s => {
+          s.classList.add('accepting');
+        });
+      }
+      e.preventDefault();
+    }
+
+    function handleTouchEnd(e) {
+      if (!touchCard) return;
+      if (isDragging) {
+        // Verificar se está sobre algum slot
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const slots = document.querySelectorAll('.slot');
+        let dropped = false;
+
+        for (let s of slots) {
+          const rect = s.getBoundingClientRect();
+          if (
+            touchEndX >= rect.left && touchEndX <= rect.right &&
+            touchEndY >= rect.top && touchEndY <= rect.bottom
+          ) {
+            const fromIdx = dragData.fromSlot;
+            const toIdx = parseInt(s.getAttribute('data-slot'));
+            if (fromIdx !== toIdx) {
+              // Reordenar
+              const item = currentOrder[fromIdx];
+              currentOrder.splice(fromIdx, 1);
+              currentOrder.splice(toIdx, 0, item);
+              dropped = true;
+            }
+            break;
+          }
+        }
+        // Reset visual
+        touchCard.style.position = '';
+        touchCard.style.zIndex = '';
+        touchCard.style.opacity = '';
+        touchCard.style.left = '';
+        touchCard.style.top = '';
+        document.querySelectorAll('.slot').forEach(s => s.classList.remove('accepting'));
+      }
+      // Limpar
+      touchCard = null;
+      touchSlot = null;
+      isDragging = false;
+      dragData = null;
+      renderCurrentOrder();
+      e.preventDefault();
+    }
+
+    // Renderiza apenas os números e cartas (sem reembaralhar)
+    function renderCurrentOrder() {
+      stagesDiv.innerHTML = '';
+      currentOrder.forEach((stageIdx, slotIdx) => {
+        const slot = document.createElement('div');
+        slot.className = 'slot';
+        slot.setAttribute('data-slot', slotIdx);
+        slot.setAttribute('data-stage', stageIdx);
+
+        const badge = document.createElement('span');
+        badge.className = 'number-badge';
+        badge.textContent = slotIdx + 1;
+        slot.appendChild(badge);
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.setAttribute('tabindex', '0');
+        card.innerHTML = STAGE_SVGS[stageIdx];
+        slot.appendChild(card);
+
+        // Re-adicionar eventos
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+        card.addEventListener('touchstart', handleTouchStart, {passive: false});
+        card.addEventListener('touchmove', handleTouchMove, {passive: false});
+        card.addEventListener('touchend', handleTouchEnd);
+
+        stagesDiv.appendChild(slot);
+      });
+
+      // Re-setup drop events
+      document.querySelectorAll('.slot').forEach(slot => {
+        slot.addEventListener('dragover', handleDragOver);
+        slot.addEventListener('drop', handleDrop);
+        slot.addEventListener('dragenter', handleDragEnter);
+        slot.addEventListener('dragleave', handleDragLeave);
+      });
+    }
+
+    // ===== VERIFICAR =====
+    function checkAnswer() {
+      // Verifica se a ordem está correta
+      let correct = true;
+      for (let i = 0; i < ORDER.length; i++) {
+        if (currentOrder[i] !== ORDER[i]) {
+          correct = false;
+          break;
+        }
+      }
+
+      if (correct) {
+        feedback.textContent = '✅ Sequência correta! Você completou o ciclo.';
+        feedback.className = 'correct';
+        checkBtn.disabled = true;
+        // Animação de sucesso
+        document.querySelectorAll('.card').forEach((card, i) => {
+          card.style.transition = 'all 0.4s';
+          setTimeout(() => {
+            card.style.transform = `scale(1.08) rotate(${i % 2 === 0 ? 3 : -3}deg)`;
+            card.style.boxShadow = '0 8px 24px #4ade8044';
+          }, i * 80);
+          setTimeout(() => {
+            card.style.transform = '';
+            card.style.boxShadow = '';
+          }, 1000 + i * 80);
+        });
+      } else {
+        feedback.textContent = '❌ Ordem incorreta. Tente novamente.';
+        feedback.className = 'wrong';
+        // Destacar incorretos
+        document.querySelectorAll('.card').forEach((card, i) => {
+          if (currentOrder[i] !== ORDER[i]) {
+            card.style.transition = 'all 0.2s';
+            card.style.border = '2.5px solid #c53030';
+            setTimeout(() => {
+              card.style.border = '2px solid #d7e0f0';
+            }, 800);
+          }
+        });
+      }
+    }
+
+    // ===== INICIAR =====
+    renderStages();
+    checkBtn.addEventListener('click', checkAnswer);
+  </script>
+</body>
+</html>
